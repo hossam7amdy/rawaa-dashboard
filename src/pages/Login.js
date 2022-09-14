@@ -1,17 +1,11 @@
-import { useContext, useState } from "react";
-import * as Yup from "yup";
 import { Formik, Form } from "formik";
-import {
-  Heading,
-  VStack,
-  Button,
-  InputLeftElement,
-  Spinner,
-} from "@chakra-ui/react";
+import { useContext, useState } from "react";
+import { VStack, Heading, InputLeftElement } from "@chakra-ui/react";
 
+import CustomInput from "../components/Input/CustomInput";
+import CustomButton from "../components/UI/CustomButton";
 import { AuthContext } from "../contexts/auth-context";
 import { getIconByName } from "../lib/IconStore";
-import CustomInput from "../components/Input/CustomInput";
 
 const Login = () => {
   const { login } = useContext(AuthContext);
@@ -25,24 +19,36 @@ const Login = () => {
     }, 1000);
   };
 
+  const initials = {
+    username: "",
+    password: "",
+  };
+  const validationSchema = (values) => {
+    let errors = {};
+
+    const username = values.username.trim();
+    if (username.length === 0) {
+      errors.username = "invalid input";
+    } else if (username.length < 5) {
+      errors.username = "title must be at leas 5 letters.";
+    }
+
+    const password = values.password.trim();
+    if (password.length === 0) {
+      errors.password = "invalid input";
+    } else if (password.length < 5) {
+      errors.password = "title must be at least 5 letters.";
+    }
+
+    return errors;
+  };
+
   return (
     <VStack h="75vh" justifyContent="center" spacing={4}>
       <Heading>Login</Heading>
       <Formik
-        initialValues={{
-          username: "",
-          password: "",
-        }}
-        validationSchema={Yup.object({
-          username: Yup.string()
-            .trim()
-            .min(6, "username must be greater than 5 letters long")
-            .required("Invalid username"),
-          password: Yup.string()
-            .trim()
-            .min(6, "password must be greater than 5 letters long")
-            .required("Invalid password"),
-        })}
+        initialValues={initials}
+        validate={validationSchema}
         onSubmit={formSubmitHandler}
       >
         <Form>
@@ -63,10 +69,12 @@ const Login = () => {
                 <InputLeftElement children={getIconByName("password")} />
               }
             />
-            <Button type="submit" variant="outline">
-              {!isLoading && "Login"}
-              {isLoading && <Spinner />}
-            </Button>
+            <CustomButton
+              type="submit"
+              variant="outline"
+              isDisabled={isLoading}
+              name={!isLoading && "Login"}
+            />
           </VStack>
         </Form>
       </Formik>

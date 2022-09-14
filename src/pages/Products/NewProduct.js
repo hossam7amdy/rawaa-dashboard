@@ -1,4 +1,5 @@
-import { Formik, Form } from "formik";
+import { useState } from "react";
+import { Formik, Form, Field } from "formik";
 import {
   FormControl,
   FormLabel,
@@ -8,137 +9,147 @@ import {
   Heading,
   VStack,
   Checkbox,
+  Text,
 } from "@chakra-ui/react";
 
+import { BASE_URL } from "../../lib/helpers";
 import useFetch from "../../hooks/use-fetch";
 import CustomInput from "../../components/Input/CustomInput";
 import Selection from "../../components/Input/Selection";
-import { DB_URL } from "../../lib/helpers";
 import LoadingSpinner from "../../components/UI/LoadingSpinner";
 import Card from "../../components/UI/Card";
 
 const NewProduct = () => {
+  const [image, setImage] = useState(null);
   const {
     isLoading,
     error,
     data: categoriesList,
     fetchAPI: sendData,
-  } = useFetch(`${DB_URL}Category/show_all`);
+  } = useFetch(`${BASE_URL}/en/api/cp/category/all`);
 
   const formSubmitHandler = async (values, actions) => {
-    const formdata = new FormData(...values);
+    const formData = new FormData();
+    for (const key in values) {
+      formData.append(key, values[key]);
+    }
+    formData.append("image", image);
 
-    console.log(formdata);
+    console.log(values, image);
 
-    // const requestOptions = {
-    //   method: "POST",
-    //   body: formdata,
-    // };
+    const requestOptions = {
+      method: "POST",
+      body: formData,
+    };
+    const response = await sendData(
+      `${BASE_URL}/ar/api/cp/product`,
+      requestOptions
+    );
+    console.log(response);
 
-    // const response = await sendData(`${DB_URL}Product/create/`, requestOptions);
-    // console.log(response);
-
-    // actions.resetForm();
+    actions.resetForm();
   };
 
   const initial = {
-    title: "",
+    titleAr: "",
+    titleEn: "",
+    categoryId: "",
     smallSizePrice: "",
     mediumSizePrice: "",
     bigSizePrice: "",
     discountValue: "",
     calories: "",
-    hasTaste: "",
-    imageFile: "",
+    // hasTaste: false,
   };
-
-  if (isLoading) {
-    return (
-      <Card>
-        <LoadingSpinner />
-        <Heading>Form is Loading...</Heading>
-      </Card>
-    );
-  }
 
   return (
     <VStack spacing={6} mt={6} w="90%">
       <Heading textAlign="center" size="md">
-        Add New Product
+        Adding New Product
       </Heading>
       <Card maxH="70vh">
-        <Formik initialValues={initial} onSubmit={formSubmitHandler}>
-          <Form>
-            <VStack spacing={4}>
-              <CustomInput
-                name="title"
-                placeholder="Enter product title"
-                size="sm"
-              />
-              <Selection
-                name="category"
-                placeholder="choose category"
-                size="sm"
-              >
-                {categoriesList.map((cat) => (
-                  <option key={cat.image} value={cat.title}>
-                    {cat.title}
-                  </option>
-                ))}
-              </Selection>
-              <FormControl>
-                <FormLabel>product image</FormLabel>
-                <Input
-                  variant="flushed"
-                  name="imageFile"
-                  type="file"
-                  size="sm"
-                />
-              </FormControl>
-              <HStack spacing={5} w="100%">
+        {isLoading && (
+          <VStack>
+            <LoadingSpinner />
+            <Text>Form is Loading...</Text>
+          </VStack>
+        )}
+        {error && (
+          <Text color="crimson">Failed to fetch categories. Try again!</Text>
+        )}
+        {!isLoading && !error && (
+          <Formik initialValues={initial} onSubmit={formSubmitHandler}>
+            <Form>
+              <VStack spacing={4}>
                 <CustomInput
-                  label="small price"
-                  size="sm"
-                  name="smallSizePrice"
-                  placeholder="Enter price"
-                  type="number"
+                  name="titleAr"
+                  type="text"
+                  label="Title in Arabic"
+                  placeholder="بيبروني"
                 />
                 <CustomInput
-                  label="medium price"
-                  size="sm"
-                  name="mediumSizePrice"
-                  placeholder="Enter price"
-                  type="number"
+                  name="titleEn"
+                  type="text"
+                  label="Title in English"
+                  placeholder="Pepperoni"
                 />
-                <CustomInput
-                  label="large price"
-                  size="sm"
-                  name="bigSizePrice"
-                  placeholder="Enter price"
-                  type="number"
-                />
-              </HStack>
-              <HStack w="100%">
-                <CustomInput
-                  size="sm"
-                  name="discountValue"
-                  placeholder="Enter discount amount in %"
-                  type="number"
-                />
-                <CustomInput
-                  size="sm"
-                  name="calories"
-                  placeholder="How many calories?"
-                  type="number"
-                />
-              </HStack>
-              <Checkbox name="hasTaste" defaultValue={false}>
-                Has Tastes
-              </Checkbox>
-              <Button type="submit">Submit</Button>
-            </VStack>
-          </Form>
-        </Formik>
+                <Selection name="categoryId" placeholder="choose category">
+                  {categoriesList.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.titleEn}
+                    </option>
+                  ))}
+                </Selection>
+                <FormControl>
+                  <FormLabel>product image</FormLabel>
+                  <Input
+                    name="image"
+                    type="file"
+                    variant="flushed"
+                    onChange={(event) => setImage(event.target.files[0])}
+                  />
+                </FormControl>
+                <HStack spacing={5} w="100%">
+                  <CustomInput
+                    name="smallSizePrice"
+                    type="number"
+                    label="small price"
+                    placeholder="10"
+                  />
+                  <CustomInput
+                    type="number"
+                    name="mediumSizePrice"
+                    label="medium price"
+                    placeholder="20"
+                  />
+                  <CustomInput
+                    name="bigSizePrice"
+                    type="number"
+                    label="large price"
+                    placeholder="30"
+                  />
+                </HStack>
+                <HStack w="100%">
+                  <CustomInput
+                    name="discountValue"
+                    type="number"
+                    label="discount value"
+                    placeholder="23%"
+                  />
+                  <CustomInput
+                    name="calories"
+                    type="number"
+                    placeholder="1500"
+                  />
+                </HStack>
+                <Field as={Checkbox} name="hasTaste">
+                  Has Tastes
+                </Field>
+                <Button type="submit">Submit</Button>
+              </VStack>
+            </Form>
+          </Formik>
+        )}
       </Card>
     </VStack>
   );

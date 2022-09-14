@@ -23,7 +23,7 @@ const Widget = (props) => {
   const iconConfig = {
     h: 6,
     w: 6,
-    borderRadius: "md",
+    rounded: "md",
   };
   if (link === "customers") {
     icon = getIconByName("person", {

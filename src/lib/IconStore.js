@@ -8,6 +8,7 @@ import {
   MdOutlineAccountBalanceWallet,
   MdOutlinePersonOutline,
   MdOutlineShoppingCart,
+  MdDriveFolderUpload,
 } from "react-icons/md";
 import { AiFillShop } from "react-icons/ai";
 import { CgProfile } from "react-icons/cg";
@@ -21,6 +22,7 @@ import {
   BellIcon,
   ChevronDownIcon,
   SunIcon,
+  StarIcon,
 } from "@chakra-ui/icons";
 import { Icon } from "@chakra-ui/react";
 
@@ -77,12 +79,14 @@ const getIcon = (name, config) => {
     person: <Icon {...config} as={MdOutlinePersonOutline} />,
     cart: <Icon {...config} as={MdOutlineShoppingCart} />,
     password: <Icon {...config} as={RiLockPasswordLine} />,
+    image: <Icon {...config} as={MdDriveFolderUpload} />,
     notification: <BellIcon {...config} />,
     moon: <MoonIcon {...config} />,
     sun: <SunIcon {...config} />,
     search: <Search2Icon {...config} />,
     hamburgerMenu: <HamburgerIcon {...config} />,
     dropdownMenu: <ChevronDownIcon {...config} />,
+    star: <StarIcon {...config} />,
   };
 
   return mapNameToIcon[name];
