@@ -14,7 +14,7 @@ const TableBox = ({ title, hasButton, ...props }) => {
 
         {hasButton && (
           <NavLink to={"new"}>
-            <CustomButton name="Add New" />
+            <CustomButton name="Add New" colorScheme="teal" />
           </NavLink>
         )}
       </Flex>
