@@ -15,7 +15,7 @@ import {
 
 import { AuthContext } from "../../contexts/auth-context";
 import { getIconByName } from "../../lib/IconStore";
-import { sidebarList } from "../../lib/helpers";
+import { SIDEBAR_LIST } from "../../lib/helpers";
 
 const Sidebar = () => {
   const { logout } = useContext(AuthContext);
@@ -46,7 +46,7 @@ const Sidebar = () => {
         Lists
       </Heading>
       <List spacing={3}>
-        {sidebarList.map((link, idx) => (
+        {SIDEBAR_LIST.map((link, idx) => (
           <ListItem key={idx}>
             <Link
               as={(props) => (
