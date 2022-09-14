@@ -1,74 +1,66 @@
 import {
-  Image,
   Table,
   Thead,
   Tbody,
   TableCaption,
   TableContainer,
   Text,
-  VStack,
-  Tr,
-  Flex,
-  Heading,
-  Th,
-  Td,
+  useColorModeValue,
 } from "@chakra-ui/react";
-import { Fragment } from "react";
-import { DB_URL } from "../../lib/helpers";
+import { LIGHT_GRAY } from "../../lib/helpers";
 import LoadingSpinner from "../UI/LoadingSpinner";
 
-const DataTable = ({ title, isLoading, error, headerData, tableData }) => {
-  const caption =
-    headerData.length === 0
-      ? `${title} table is empty`
-      : `All available ${title.toLowerCase()} table`;
+const DataTable = ({ isLoading, error, headerRows, bodyRows }) => {
+  let caption;
+
+  if (isLoading) {
+    caption = (
+      <TableCaption>
+        <LoadingSpinner />
+        <Text>Fetching table data...</Text>
+      </TableCaption>
+    );
+  }
+
+  if (error) {
+    caption = (
+      <TableCaption color="crimson">
+        {error || "something went wrong!"}
+      </TableCaption>
+    );
+  }
+
+  if (!isLoading && !error) {
+    caption = (
+      <TableCaption>
+        {bodyRows.length === 0 ? `table is empty` : `All available items`}
+      </TableCaption>
+    );
+  }
 
   return (
-    <Fragment>
-      {isLoading && (
-        <VStack justify="center" align="center">
-          <LoadingSpinner />
-          <Text>Fetching data...</Text>
-        </VStack>
-      )}
-      {error && (
-        <Flex h="50vh" justify="center" align="center">
-          <Heading size="md" color="crimson">
-            {error || "something went wrong!"}
-          </Heading>
-        </Flex>
-      )}
-      {!isLoading && !error && (
-        <TableContainer h="70vh" overflowY="auto">
-          <Table size="sm" border="1px">
-            <TableCaption>{caption}</TableCaption>
-            <Thead>
-              <Tr>
-                {headerData.map((th) => (
-                  <Th key={th}>{th}</Th>
-                ))}
-              </Tr>
-            </Thead>
-            <Tbody>
-              {tableData.map((row) => (
-                <Tr key={row.id}>
-                  <Td>{row.id}</Td>
-                  <Td>
-                    <Image
-                      src={`${DB_URL}FileUploads/GetPysicalFile/${row.image}`}
-                      alt={row.image}
-                      borderRadius="md"
-                      boxSize="50px"
-                    />
-                  </Td>
-                  <Td>{row.title}</Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </TableContainer>
-      )}
-    </Fragment>
+    <TableContainer
+      h="70vh"
+      overflowY="auto"
+      sx={{
+        "&::-webkit-scrollbar": {
+          w: 2,
+        },
+        "&::-webkit-scrollbar-track": {
+          w: 6,
+        },
+        "&::-webkit-scrollbar-thumb": {
+          rounded: "md",
+          bg: useColorModeValue(...LIGHT_GRAY),
+        },
+      }}
+    >
+      <Table size="sm" border="1px">
+        {caption}
+        <Thead>{headerRows}</Thead>
+        <Tbody>{bodyRows}</Tbody>
+      </Table>
+    </TableContainer>
   );
 };
 
