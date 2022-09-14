@@ -1,5 +1,5 @@
 import { Box, useColorModeValue } from "@chakra-ui/react";
-import { GRAY_COLOR, LIGHT_GRAY, SCROLLBAR_STYLE } from "../../lib/helpers";
+import { LIGHT_GRAY } from "../../lib/helpers";
 
 const Card = ({ children, ...props }) => {
   return (
@@ -7,18 +7,18 @@ const Card = ({ children, ...props }) => {
       p={5}
       border="1px"
       borderColor="gray.200"
-      borderRadius="md"
+      rounded="md"
       shadow="md"
       overflowY="auto"
-      __css={{
+      sx={{
         "&::-webkit-scrollbar": {
-          w: 1,
+          w: 2,
         },
         "&::-webkit-scrollbar-track": {
-          w: 3,
+          w: 6,
         },
         "&::-webkit-scrollbar-thumb": {
-          borderRadius: "md",
+          rounded: "md",
           bg: useColorModeValue(...LIGHT_GRAY),
         },
       }}

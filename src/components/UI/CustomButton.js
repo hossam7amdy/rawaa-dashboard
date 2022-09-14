@@ -1,11 +1,7 @@
-import { Button } from "@chakra-ui/react";
+import { Button, Spinner } from "@chakra-ui/react";
 
 const CustomButton = ({ name, ...props }) => {
-  return (
-    <Button {...props} colorScheme="teal">
-      {name}
-    </Button>
-  );
+  return <Button {...props}>{name ? name : <Spinner />}</Button>;
 };
 
 export default CustomButton;
