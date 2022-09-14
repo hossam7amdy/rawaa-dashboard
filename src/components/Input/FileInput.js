@@ -1,28 +1,26 @@
-import { FormControl, FormLabel, Input, Text } from "@chakra-ui/react";
-import { useState } from "react";
-import { FILE_SIZE, SUPPORTED_FORMATS } from "../../lib/helpers";
+import {
+  Text,
+  Flex,
+  Input,
+  FormLabel,
+  FormControl,
+  FormHelperText,
+} from "@chakra-ui/react";
+import { getIconByName } from "../../lib/IconStore";
 
-const InputFile = ({ label, setImageFile, ...props }) => {
-  const [error, setError] = useState(null);
-
-  const inputFileHandler = (event) => {
-    const image = event.target.files[0];
-
-    if (image.size > FILE_SIZE) {
-      setError("Image size is too large");
-    } else if (!SUPPORTED_FORMATS.includes(image.type)) {
-      console.log(image.name, image.type);
-      setError(`Only [${[...SUPPORTED_FORMATS]}] formats are supported`);
-    } else {
-      setImageFile(event.target.files[0]);
-    }
-  };
-
+const InputFile = ({ label, error, ...props }) => {
   return (
     <FormControl>
-      <FormLabel>{label || props.id || props.name}</FormLabel>
-      <Input type="file" onChange={inputFileHandler} {...props} />
-      {error && <Text color="red">{error}</Text>}
+      <FormLabel cursor="pointer">
+        {
+          <Flex gap={2}>
+            <Text>{label || props.name}</Text>
+            {getIconByName("image", { h: 6, w: 6 })}
+          </Flex>
+        }
+      </FormLabel>
+      <Input type="file" {...props} />
+      {error && <FormHelperText color="red">{error}</FormHelperText>}
     </FormControl>
   );
 };
