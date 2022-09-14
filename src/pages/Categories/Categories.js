@@ -3,6 +3,7 @@ import { Td, Th, Tr, Image, HStack, useToast } from "@chakra-ui/react";
 import useFetch from "../../hooks/use-fetch";
 import TableBox from "../../components/table/TableBox";
 import CustomButton from "../../components/UI/CustomButton";
+import { useNavigate } from "react-router-dom";
 import { BASE_URL, FAILED_TOAST, SUCCESS_TOAST } from "../../lib/helpers";
 
 // TODO enumrate away
@@ -16,9 +17,10 @@ const Categories = () => {
     fetchAPI: deleteRequest,
   } = useFetch(url + "all");
   const toast = useToast();
+  const navigate = useNavigate();
 
   const editCategoryHandler = (category) => {
-    console.log(category);
+    navigate("/categories/new", { state: category });
   };
 
   const deleteCategoryHandler = async (id) => {

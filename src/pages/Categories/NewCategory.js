@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Form, Formik } from "formik";
-import { Flex, Image, VStack, Heading, useToast } from "@chakra-ui/react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Box, Wrap, Flex, Image, Heading, useToast } from "@chakra-ui/react";
 import {
   BASE_URL,
   MAX_FILE_SIZE,
@@ -8,19 +9,16 @@ import {
   SUPPORTED_FORMATS,
 } from "../../lib/helpers";
 
-import Card from "../../components/UI/Card";
-import useFetch from "../../hooks/use-fetch";
-import InputFile from "../../components/Input/FileInput";
-import CustomInput from "../../components/Input/CustomInput";
 import CustomButton from "../../components/UI/CustomButton";
-import { useNavigate } from "react-router-dom";
-
-// TODO enumrate away
-const url = `${BASE_URL}/ar/api/cp/category`;
+import CustomInput from "../../components/Input/CustomInput";
+import InputFile from "../../components/Input/FileInput";
+import useFetch from "../../hooks/use-fetch";
+import Card from "../../components/UI/Card";
 
 const NewCategory = () => {
-  const navigate = useNavigate();
   const toast = useToast();
+  const navigate = useNavigate();
+  const { state } = useLocation();
   const [preview, setPreview] = useState(null);
   const { isLoading, fetchAPI: sendData } = useFetch();
 
@@ -29,23 +27,26 @@ const NewCategory = () => {
     for (const key in values) {
       formData.append(key, values[key]);
     }
-
     const requestOptions = {
-      method: "POST",
+      method: !state ? "POST" : "PUT",
       body: formData,
     };
 
+    // TODO enumrate away
+    const url = `${BASE_URL}/en/api/cp/category/${state ? state.id : ""}`;
+
     await sendData(url, requestOptions);
+
     toast(SUCCESS_TOAST);
 
     setPreview(null);
     actions.resetForm();
-    navigate(-1);
+    navigate(-1); // previous page
   };
 
   const initials = {
-    titleAr: "",
-    titleEn: "",
+    titleAr: state?.titleAr || "",
+    titleEn: state?.titleEn || "",
     image: "",
   };
   const validations = (values) => {
@@ -53,20 +54,22 @@ const NewCategory = () => {
 
     const titleAr = values.titleAr.trim();
     if (titleAr.length === 0) {
-      errors.titleAr = "invalid input";
+      errors.titleAr = "Invalid Input";
     } else if (titleAr.length < 5) {
-      errors.titleAr = "title must be at leas 5 letters.";
+      errors.titleAr = "Title must be at leas 5 letters.";
     }
 
     const titleEn = values.titleEn.trim();
     if (titleEn.length === 0) {
-      errors.titleEn = "invalid input";
+      errors.titleEn = "Invalid Input";
     } else if (titleEn.length < 5) {
-      errors.titleEn = "title must be at least 5 letters.";
+      errors.titleEn = "Title must be at least 5 letters.";
     }
 
-    if (!SUPPORTED_FORMATS.includes(values.image.type)) {
-      errors.image = "not supported format";
+    if (state) {
+      // FIXME: put request
+    } else if (!SUPPORTED_FORMATS.includes(values.image.type)) {
+      errors.image = "Not supported format";
     } else if (values.image.size > MAX_FILE_SIZE) {
       errors.image = "Large size. Must be less than 1MB";
     }
@@ -75,10 +78,12 @@ const NewCategory = () => {
   };
 
   return (
-    <VStack spacing={6} mt={6} w="90%">
-      <Heading size="md">Adding new Category</Heading>
+    <Box maxW="90%" maxH="80vh" m={6}>
+      <Heading size="md" m={6}>
+        Adding new Category
+      </Heading>
 
-      <Card minW="70%">
+      <Card>
         <Formik
           initialValues={initials}
           validate={validations}
@@ -86,7 +91,7 @@ const NewCategory = () => {
         >
           {({ errors, setFieldValue }) => (
             <Form>
-              <Flex w="100%" justify="space-evenly">
+              <Flex gap={10}>
                 <Image
                   rounded="full"
                   boxSize="100px"
@@ -94,11 +99,13 @@ const NewCategory = () => {
                   src={
                     preview
                       ? URL.createObjectURL(preview)
+                      : state
+                      ? `${BASE_URL}/api/file/${state.image}`
                       : "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"
                   }
                   alt=""
                 />
-                <VStack spacing={4} w="50%">
+                <Wrap spacing={4}>
                   <InputFile
                     name="image"
                     label="Image"
@@ -123,17 +130,17 @@ const NewCategory = () => {
                   />
                   <CustomButton
                     type="submit"
-                    variant="outline"
+                    colorScheme="teal"
                     isDisabled={isLoading}
                     name={!isLoading && "Submit"}
                   />
-                </VStack>
+                </Wrap>
               </Flex>
             </Form>
           )}
         </Formik>
       </Card>
-    </VStack>
+    </Box>
   );
 };
 
