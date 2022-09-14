@@ -22,10 +22,15 @@ const useFetch = (url = undefined, requestOptions = undefined) => {
       const fetchPro = requestOptions ? fetch(url, requestOptions) : fetch(url);
 
       const response = await Promise.race([fetchPro, timeout(TIMEOUT_SEC)]);
-      if (!response.ok) throw new Error("Something went wrong");
       const responseData = await response.json();
+      if (!response.ok)
+        throw new Error(responseData?.errors?.id || "Something went wrong");
 
-      setData(responseData);
+      if (requestOptions?.method === "DELETE") {
+        setData(data.filter((item) => item.id !== requestOptions.id));
+      } else {
+        setData(responseData);
+      }
     } catch (err) {
       setError(err.message);
     } finally {
