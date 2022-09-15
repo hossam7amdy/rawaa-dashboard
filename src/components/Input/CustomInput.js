@@ -3,9 +3,9 @@ import {
   FormLabel,
   InputGroup,
   FormControl,
-  FormHelperText,
+  FormErrorMessage,
 } from "@chakra-ui/react";
-import { useField } from "formik";
+import { Field, useField } from "formik";
 
 const CustomInput = ({ label, leftElement, ...props }) => {
   const [field, meta] = useField(props);
@@ -15,10 +15,10 @@ const CustomInput = ({ label, leftElement, ...props }) => {
       <FormLabel>{label || props.name}</FormLabel>
       <InputGroup>
         {leftElement}
-        <Input {...props} {...field} />
+        <Field as={Input} {...props} {...field} />
       </InputGroup>
       {meta.touched && meta.error && (
-        <FormHelperText color="red">{meta.error}</FormHelperText>
+        <FormErrorMessage>{meta.error}</FormErrorMessage>
       )}
     </FormControl>
   );

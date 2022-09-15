@@ -6,12 +6,16 @@ import {
   FormControl,
   FormHelperText,
 } from "@chakra-ui/react";
+import { Field, useField } from "formik";
 import { getIconByName } from "../../lib/IconStore";
 
-const InputFile = ({ label, error, ...props }) => {
+const InputFile = ({ label, ...props }) => {
+  const [field, meta] = useField(props);
+  const { value, ...rest } = field;
+
   return (
     <FormControl>
-      <FormLabel cursor="pointer">
+      <FormLabel cursor="pointer" maxW="min-content">
         {
           <Flex gap={2}>
             <Text>{label || props.name}</Text>
@@ -19,8 +23,8 @@ const InputFile = ({ label, error, ...props }) => {
           </Flex>
         }
       </FormLabel>
-      <Input type="file" {...props} />
-      {error && <FormHelperText color="red">{error}</FormHelperText>}
+      <Field as={Input} type="file" value={undefined} {...rest} {...props} />
+      {meta.error && <FormHelperText color="red">{meta.error}</FormHelperText>}
     </FormControl>
   );
 };
