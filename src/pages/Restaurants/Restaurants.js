@@ -1,13 +1,15 @@
 import { Td, Th, Tr, Image, HStack, Button } from "@chakra-ui/react";
+
+import { FILE_API, RESTAURANT_API } from "../../lib/api";
 import TableBox from "../../components/table/TableBox";
 import useFetch from "../../hooks/use-fetch";
-import { BASE_URL } from "../../lib/helpers";
+
 const Restaurants = () => {
   const {
     isLoading,
     error,
     data: tableData,
-  } = useFetch(`${BASE_URL}/api/restaurant/show_all?lang=en`);
+  } = useFetch(`${RESTAURANT_API}/all`);
 
   const headerRows = (
     <Tr>
@@ -22,7 +24,7 @@ const Restaurants = () => {
       <Td>{row.id}</Td>
       <Td>
         <Image
-          src={`${BASE_URL}/api/file/${row.image}`}
+          src={FILE_API + row.image}
           alt={row.image}
           rounded="md"
           boxSize="50px"

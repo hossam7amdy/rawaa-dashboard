@@ -1,13 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import { Td, Th, Tr, Image, HStack, useToast } from "@chakra-ui/react";
 
-import useFetch from "../../hooks/use-fetch";
-import TableBox from "../../components/table/TableBox";
+import { FAILED_TOAST, SUCCESS_TOAST } from "../../lib/helpers";
+import { CATEGORY_API, FILE_API } from "../../lib/api";
 import CustomButton from "../../components/UI/CustomButton";
-import { useNavigate } from "react-router-dom";
-import { BASE_URL, FAILED_TOAST, SUCCESS_TOAST } from "../../lib/helpers";
-
-// TODO enumrate away
-const url = `${BASE_URL}/ar/api/cp/category/`;
+import TableBox from "../../components/table/TableBox";
+import useFetch from "../../hooks/use-fetch";
 
 const Categories = () => {
   const {
@@ -15,7 +13,7 @@ const Categories = () => {
     error,
     data: tableData,
     fetchAPI: deleteRequest,
-  } = useFetch(url + "all");
+  } = useFetch(`${CATEGORY_API}/all`);
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -24,7 +22,7 @@ const Categories = () => {
   };
 
   const deleteCategoryHandler = async (id) => {
-    await deleteRequest(url + id, {
+    await deleteRequest(`${CATEGORY_API}/${id}`, {
       id,
       method: "DELETE",
     });
@@ -52,7 +50,7 @@ const Categories = () => {
       <Td>{row.id}</Td>
       <Td>
         <Image
-          src={`${BASE_URL}/api/file/${row.image}`}
+          src={FILE_API + row.image}
           alt={row.image}
           borderRadius="md"
           boxSize="50px"

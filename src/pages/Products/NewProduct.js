@@ -12,11 +12,11 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-import { BASE_URL } from "../../lib/helpers";
-import useFetch from "../../hooks/use-fetch";
+import { PRODUCT_API } from "../../lib/api";
+import LoadingSpinner from "../../components/UI/LoadingSpinner";
 import CustomInput from "../../components/Input/CustomInput";
 import Selection from "../../components/Input/Selection";
-import LoadingSpinner from "../../components/UI/LoadingSpinner";
+import useFetch from "../../hooks/use-fetch";
 import Card from "../../components/UI/Card";
 
 const NewProduct = () => {
@@ -26,7 +26,7 @@ const NewProduct = () => {
     error,
     data: categoriesList,
     fetchAPI: sendData,
-  } = useFetch(`${BASE_URL}/en/api/cp/category/all`);
+  } = useFetch(`${PRODUCT_API}/all`);
 
   const formSubmitHandler = async (values, actions) => {
     const formData = new FormData();
@@ -35,17 +35,12 @@ const NewProduct = () => {
     }
     formData.append("image", image);
 
-    console.log(values, image);
-
     const requestOptions = {
       method: "POST",
       body: formData,
     };
-    const response = await sendData(
-      `${BASE_URL}/ar/api/cp/product`,
-      requestOptions
-    );
-    console.log(response);
+
+    await sendData(PRODUCT_API, requestOptions);
 
     actions.resetForm();
   };

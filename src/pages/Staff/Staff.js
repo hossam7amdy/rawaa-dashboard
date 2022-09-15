@@ -1,14 +1,11 @@
 import { Td, Th, Tr, Image, HStack, Button } from "@chakra-ui/react";
+
+import { FILE_API, STAFF_API } from "../../lib/api";
 import TableBox from "../../components/table/TableBox";
 import useFetch from "../../hooks/use-fetch";
-import { BASE_URL } from "../../lib/helpers";
 
 const Staff = () => {
-  const {
-    isLoading,
-    error,
-    data: tableData,
-  } = useFetch(`${BASE_URL}/en/api/cp/staff/all`);
+  const { isLoading, error, data: tableData } = useFetch(`${STAFF_API}/all`);
 
   const headerRows = (
     <Tr>
@@ -23,7 +20,7 @@ const Staff = () => {
       <Td>{row.id}</Td>
       <Td>
         <Image
-          src={`${BASE_URL}/api/file/${row.image}`}
+          src={FILE_API + row.image}
           alt={row.image}
           rounded="md"
           boxSize="50px"

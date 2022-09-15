@@ -1,12 +1,10 @@
-import { Td, Th, Tr, Image, HStack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import TableBox from "../../components/table/TableBox";
-import CustomButton from "../../components/UI/CustomButton";
-import useFetch from "../../hooks/use-fetch";
-import { BASE_URL } from "../../lib/helpers";
+import { Td, Th, Tr, Image, HStack } from "@chakra-ui/react";
 
-// TODO enumrate away
-const url = `${BASE_URL}/ar/api/cp/product/`;
+import { FILE_API, PRODUCT_API } from "../../lib/api";
+import CustomButton from "../../components/UI/CustomButton";
+import TableBox from "../../components/table/TableBox";
+import useFetch from "../../hooks/use-fetch";
 
 const Products = () => {
   const {
@@ -14,7 +12,7 @@ const Products = () => {
     error,
     data: tableData,
     fetchAPI: deleteRequest,
-  } = useFetch(url + "all");
+  } = useFetch(`${PRODUCT_API}/all`);
 
   const navigate = useNavigate();
 
@@ -23,7 +21,7 @@ const Products = () => {
   };
 
   const deleteItemHandler = async (id) => {
-    await deleteRequest(url + id, {
+    await deleteRequest(PRODUCT_API + id, {
       method: "DELETE",
     });
   };
@@ -49,7 +47,7 @@ const Products = () => {
       <Td>{row.id}</Td>
       <Td>
         <Image
-          src={`${BASE_URL}/api/file/${row.image}`}
+          src={FILE_API + row.image}
           alt={row.image}
           rounded="md"
           boxSize="50px"
