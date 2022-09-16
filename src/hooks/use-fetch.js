@@ -23,6 +23,7 @@ const useFetch = (url = undefined, requestOptions = undefined) => {
 
       const response = await Promise.race([fetchPro, timeout(TIMEOUT_SEC)]);
       const responseData = await response.json();
+
       if (!response.ok)
         throw new Error(responseData?.errors?.id || "Something went wrong");
 
@@ -39,8 +40,10 @@ const useFetch = (url = undefined, requestOptions = undefined) => {
   };
 
   useEffect(() => {
-    fetchAPI(url);
-  }, [url]);
+    if (url) {
+      fetchAPI(url);
+    }
+  }, []);
 
   return {
     data,
