@@ -2,6 +2,7 @@ import { Formik, Form } from "formik";
 import { useContext, useState } from "react";
 import { VStack, Heading, InputLeftElement } from "@chakra-ui/react";
 
+import { VALIDATE_PASSWORD, VALIDATE_USERNAME } from "../lib/validations";
 import CustomInput from "../components/Input/CustomInput";
 import CustomButton from "../components/UI/CustomButton";
 import { AuthContext } from "../contexts/auth-context";
@@ -19,52 +20,31 @@ const Login = () => {
     }, 1000);
   };
 
-  const initials = {
-    username: "",
-    password: "",
-  };
-  const validationSchema = (values) => {
-    let errors = {};
-
-    const username = values.username.trim();
-    if (username.length === 0) {
-      errors.username = "invalid input";
-    } else if (username.length < 5) {
-      errors.username = "title must be at leas 5 letters.";
-    }
-
-    const password = values.password.trim();
-    if (password.length === 0) {
-      errors.password = "invalid input";
-    } else if (password.length < 5) {
-      errors.password = "title must be at least 5 letters.";
-    }
-
-    return errors;
-  };
-
   return (
     <VStack h="75vh" justifyContent="center" spacing={4}>
       <Heading>Login</Heading>
       <Formik
-        initialValues={initials}
-        validate={validationSchema}
+        initialValues={{ username: "", password: "" }}
         onSubmit={formSubmitHandler}
       >
         <Form>
           <VStack w="md">
             <CustomInput
-              name="username"
-              placeholder="Enter your username"
               type="text"
+              name="username"
+              label="Username"
+              placeholder="Enter your username"
+              validate={VALIDATE_USERNAME}
               leftElement={
-                <InputLeftElement children={getIconByName("person")} />
+                <InputLeftElement mr={5} children={getIconByName("person")} />
               }
             />
             <CustomInput
-              name="password"
-              placeholder="Enter your password"
               type="password"
+              name="password"
+              label="Password"
+              placeholder="Enter your password"
+              validate={VALIDATE_PASSWORD}
               leftElement={
                 <InputLeftElement children={getIconByName("password")} />
               }

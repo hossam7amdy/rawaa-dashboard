@@ -15,7 +15,7 @@ const CustomInput = ({ label, leftElement, ...props }) => {
       <FormLabel>{label || props.name}</FormLabel>
       <InputGroup>
         {leftElement}
-        <Field as={Input} {...props} {...field} />
+        <Input as={Field} {...props} {...field} />
       </InputGroup>
       {meta.touched && meta.error && (
         <FormErrorMessage>{meta.error}</FormErrorMessage>

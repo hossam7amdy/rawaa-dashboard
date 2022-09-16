@@ -23,7 +23,14 @@ const InputFile = ({ label, ...props }) => {
           </Flex>
         }
       </FormLabel>
-      <Field as={Input} type="file" value={undefined} {...rest} {...props} />
+      <Input
+        as={Field}
+        type="file"
+        display="none"
+        value={undefined}
+        {...rest}
+        {...props}
+      />
       {meta.error && <FormHelperText color="red">{meta.error}</FormHelperText>}
     </FormControl>
   );

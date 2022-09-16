@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { Form, Formik } from "formik";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Box, Flex, Image, VStack, useToast } from "@chakra-ui/react";
+import { Box, Flex, VStack, useToast } from "@chakra-ui/react";
 
 import { ARABIC_WORD, ENGLISH_WORD, IMAGE_FILE } from "../../lib/validations";
-import { SUCCESS_TOAST, IMAGE_PREVIEW } from "../../lib/helpers";
 import { CATEGORY_API, FILE_API } from "../../lib/api";
+import { SUCCESS_TOAST } from "../../lib/helpers";
 import CustomButton from "../../components/UI/CustomButton";
+import PreviewImage from "../../components/UI/PreviewImage";
+import InputHeader from "../../components/Input/InputHeader";
 import CustomInput from "../../components/Input/CustomInput";
 import InputFile from "../../components/Input/FileInput";
 import useFetch from "../../hooks/use-fetch";
 import Card from "../../components/UI/Card";
-import InputHeader from "../../components/Input/InputHeader";
 
 const NewCategory = () => {
   const toast = useToast();
@@ -19,7 +20,7 @@ const NewCategory = () => {
   const { state: prevState } = useLocation();
   const { isLoading, fetchAPI: sendData } = useFetch();
   const [Imagepreview, setImagePreview] = useState(
-    prevState ? `${FILE_API}${prevState?.image}` : IMAGE_PREVIEW
+    prevState ? `${FILE_API}${prevState?.image}` : null
   );
 
   const formSubmitHandler = async (values, actions) => {
@@ -40,7 +41,7 @@ const NewCategory = () => {
     toast(SUCCESS_TOAST);
 
     actions.resetForm();
-    setImagePreview(IMAGE_PREVIEW);
+    setImagePreview(null);
     if (prevState) navigate(-1);
   };
 
@@ -52,31 +53,26 @@ const NewCategory = () => {
 
   return (
     <Box>
-      {/* TODO create form header component */}
       <InputHeader title={prevState ? "Edit Category" : "Add New Category"} />
 
       <Card maxH="70vh">
         <Formik initialValues={initials} onSubmit={formSubmitHandler}>
-          {({ setFieldValue }) => (
+          {({ values, setFieldValue }) => (
             <Form>
               <Flex gap={10}>
-                <Image
-                  rounded="full"
-                  boxSize="100px"
-                  justifyContent="center"
-                  src={Imagepreview}
-                  alt="image placeholder"
-                />
+                <PreviewImage image={Imagepreview} />
+
                 <VStack minW="350px" spacing="4" align="start">
                   <InputFile
                     name="image"
                     label="Image"
-                    display="none"
                     validate={IMAGE_FILE}
                     onChange={(event) => {
                       setFieldValue("image", event.target.files[0]);
                       setImagePreview(
-                        URL.createObjectURL(event.target.files[0])
+                        event.target.files[0]
+                          ? URL.createObjectURL(event.target.files[0])
+                          : null
                       );
                     }}
                   />
@@ -98,9 +94,6 @@ const NewCategory = () => {
                     type="submit"
                     colorScheme="teal"
                     isDisabled={isLoading}
-                    onClick={() => {
-                      console.log(initials.image);
-                    }}
                     name={
                       !isLoading &&
                       (!prevState ? "Add Category" : "Edit Category")

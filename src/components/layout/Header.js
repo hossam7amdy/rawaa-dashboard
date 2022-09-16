@@ -49,7 +49,7 @@ const Header = () => {
             <FormControl>
               <InputGroup>
                 <InputLeftElement children={getIconByName("search")} />
-                <Input w="auto" id="search" type="text" placeholder="search" />
+                <Input name="search" type="search" placeholder="search" />
               </InputGroup>
             </FormControl>
           </form>

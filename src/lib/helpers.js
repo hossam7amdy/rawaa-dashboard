@@ -1,8 +1,6 @@
 export const TIMEOUT_SEC = 5;
 export const LIGHT_GRAY = Object.freeze(["gray.100", "gray.700"]);
 export const GRAY_COLOR = Object.freeze(["gray.400", "gray.500"]);
-export const IMAGE_PREVIEW =
-  "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg";
 
 export const SIDEBAR_LIST = Object.freeze([
   "Customers",
