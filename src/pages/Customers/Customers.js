@@ -1,11 +1,11 @@
 import { Td, Th, Tr, Image, HStack, Button } from "@chakra-ui/react";
 
-import { FILE_API, PRODUCT_API } from "../../lib/api";
+import { FILE_URL, PRODUCT_URL } from "../../lib/urls";
 import TableBox from "../../components/table/TableBox";
 import useFetch from "../../hooks/use-fetch";
 
 const Customers = () => {
-  const { isLoading, error, data: tableData } = useFetch(`${PRODUCT_API}/all`);
+  const { isLoading, error, data: tableData } = useFetch(`${PRODUCT_URL}/all`);
 
   const headerRows = (
     <Tr>
@@ -20,7 +20,7 @@ const Customers = () => {
       <Td>{row.id}</Td>
       <Td>
         <Image
-          src={FILE_API + row.image}
+          src={FILE_URL + row.image}
           alt={row.image}
           rounded="md"
           boxSize="50px"

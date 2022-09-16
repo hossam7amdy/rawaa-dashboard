@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Td, Th, Tr, Image, HStack, useToast } from "@chakra-ui/react";
 
 import { FAILED_TOAST, SUCCESS_TOAST } from "../../lib/helpers";
-import { CATEGORY_API, FILE_API } from "../../lib/api";
+import { CATEGORY_URL, FILE_URL } from "../../lib/urls";
 import CustomButton from "../../components/UI/CustomButton";
 import TableBox from "../../components/table/TableBox";
 import useFetch from "../../hooks/use-fetch";
@@ -13,7 +13,7 @@ const Categories = () => {
     error,
     data: tableData,
     fetchAPI: deleteRequest,
-  } = useFetch(`${CATEGORY_API}/all`);
+  } = useFetch(`${CATEGORY_URL}/all`);
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -22,7 +22,7 @@ const Categories = () => {
   };
 
   const deleteCategoryHandler = async (id) => {
-    await deleteRequest(`${CATEGORY_API}/${id}`, {
+    await deleteRequest(`${CATEGORY_URL}/${id}`, {
       id,
       method: "DELETE",
     });
@@ -50,7 +50,7 @@ const Categories = () => {
       <Td>{row.id}</Td>
       <Td>
         <Image
-          src={FILE_API + row.image}
+          src={FILE_URL + row.image}
           alt={row.image}
           borderRadius="md"
           boxSize="50px"

@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 
 import { AuthContext } from "../../contexts/auth-context";
-import { getIconByName } from "../../lib/IconStore";
+import { getIconByName } from "../../lib/IconsFactory";
 import { SIDEBAR_LIST } from "../../lib/helpers";
 
 const Sidebar = () => {

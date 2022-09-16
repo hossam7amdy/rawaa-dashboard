@@ -12,7 +12,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-import { PRODUCT_API } from "../../lib/api";
+import { PRODUCT_URL } from "../../lib/urls";
 import LoadingSpinner from "../../components/UI/LoadingSpinner";
 import CustomInput from "../../components/Input/CustomInput";
 import Selection from "../../components/Input/Selection";
@@ -26,7 +26,7 @@ const NewProduct = () => {
     error,
     data: categoriesList,
     fetchAPI: sendData,
-  } = useFetch(`${PRODUCT_API}/all`);
+  } = useFetch(`${PRODUCT_URL}/all`);
 
   const formSubmitHandler = async (values, actions) => {
     const formData = new FormData();
@@ -40,7 +40,7 @@ const NewProduct = () => {
       body: formData,
     };
 
-    await sendData(PRODUCT_API, requestOptions);
+    await sendData(PRODUCT_URL, requestOptions);
 
     actions.resetForm();
   };

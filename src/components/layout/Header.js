@@ -18,7 +18,7 @@ import {
   MenuDivider,
 } from "@chakra-ui/react";
 
-import { getIconByName } from "../../lib/IconStore";
+import { getIconByName } from "../../lib/IconsFactory";
 import { AuthContext } from "../../contexts/auth-context";
 
 const Header = () => {

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Td, Th, Tr, Image, HStack } from "@chakra-ui/react";
 
-import { FILE_API, PRODUCT_API } from "../../lib/api";
+import { FILE_URL, PRODUCT_URL } from "../../lib/urls";
 import CustomButton from "../../components/UI/CustomButton";
 import TableBox from "../../components/table/TableBox";
 import useFetch from "../../hooks/use-fetch";
@@ -12,7 +12,7 @@ const Products = () => {
     error,
     data: tableData,
     fetchAPI: deleteRequest,
-  } = useFetch(`${PRODUCT_API}/all`);
+  } = useFetch(`${PRODUCT_URL}/all`);
 
   const navigate = useNavigate();
 
@@ -21,7 +21,7 @@ const Products = () => {
   };
 
   const deleteItemHandler = async (id) => {
-    await deleteRequest(PRODUCT_API + id, {
+    await deleteRequest(PRODUCT_URL + id, {
       method: "DELETE",
     });
   };
@@ -47,7 +47,7 @@ const Products = () => {
       <Td>{row.id}</Td>
       <Td>
         <Image
-          src={FILE_API + row.image}
+          src={FILE_URL + row.image}
           alt={row.image}
           rounded="md"
           boxSize="50px"

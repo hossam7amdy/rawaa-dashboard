@@ -62,7 +62,7 @@ const logo = (
 );
 
 const getIcon = (name, config) => {
-  const mapNameToIcon = {
+  const mapNameToIcon = Object.freeze({
     logo,
     staff: <Icon {...config} as={MdPeople} />,
     restaurants: <Icon {...config} as={MdRestaurant} />,
@@ -87,7 +87,7 @@ const getIcon = (name, config) => {
     hamburgerMenu: <HamburgerIcon {...config} />,
     dropdownMenu: <ChevronDownIcon {...config} />,
     star: <StarIcon {...config} />,
-  };
+  });
 
   return mapNameToIcon[name];
 };

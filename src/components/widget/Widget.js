@@ -1,4 +1,4 @@
-import { getIconByName } from "../../lib/IconStore";
+import { getIconByName } from "../../lib/IconsFactory";
 import {
   Link,
   Stat,

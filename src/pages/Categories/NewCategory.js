@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Box, Flex, VStack, useToast } from "@chakra-ui/react";
 
 import { ARABIC_WORD, ENGLISH_WORD, IMAGE_FILE } from "../../lib/validations";
-import { CATEGORY_API, FILE_API } from "../../lib/api";
+import { CATEGORY_URL, FILE_URL } from "../../lib/urls";
 import { SUCCESS_TOAST } from "../../lib/helpers";
 import CustomButton from "../../components/UI/CustomButton";
 import PreviewImage from "../../components/UI/PreviewImage";
@@ -20,7 +20,7 @@ const NewCategory = () => {
   const { state: prevState } = useLocation();
   const { isLoading, fetchAPI: sendData } = useFetch();
   const [Imagepreview, setImagePreview] = useState(
-    prevState ? `${FILE_API}${prevState?.image}` : null
+    prevState ? `${FILE_URL}${prevState?.image}` : null
   );
 
   const formSubmitHandler = async (values, actions) => {
@@ -35,7 +35,7 @@ const NewCategory = () => {
       body: formData,
     };
 
-    const url = `${CATEGORY_API}/${prevState ? prevState.id : ""}`;
+    const url = `${CATEGORY_URL}/${prevState ? prevState.id : ""}`;
     await sendData(url, requestOptions);
 
     toast(SUCCESS_TOAST);

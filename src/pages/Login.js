@@ -6,7 +6,7 @@ import { VALIDATE_PASSWORD, VALIDATE_USERNAME } from "../lib/validations";
 import CustomInput from "../components/Input/CustomInput";
 import CustomButton from "../components/UI/CustomButton";
 import { AuthContext } from "../contexts/auth-context";
-import { getIconByName } from "../lib/IconStore";
+import { getIconByName } from "../lib/IconsFactory";
 
 const Login = () => {
   const { login } = useContext(AuthContext);

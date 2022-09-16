@@ -7,7 +7,7 @@ import {
   FormHelperText,
 } from "@chakra-ui/react";
 import { Field, useField } from "formik";
-import { getIconByName } from "../../lib/IconStore";
+import { getIconByName } from "../../lib/IconsFactory";
 
 const InputFile = ({ label, ...props }) => {
   const [field, meta] = useField(props);
