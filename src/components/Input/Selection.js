@@ -1,14 +1,32 @@
-import { useField } from "formik";
-import { FormControl, FormLabel, Text, Select } from "@chakra-ui/react";
+import {
+  Select,
+  FormLabel,
+  FormControl,
+  FormErrorMessage,
+} from "@chakra-ui/react";
+import { Field, useField } from "formik";
 
-const Selection = ({ label, ...props }) => {
+const Selection = ({ options, label, ...props }) => {
   const [field, meta] = useField(props);
 
   return (
-    <FormControl isInvalid={meta.touched && meta.error}>
-      <FormLabel>{label || props.id || props.name}</FormLabel>
-      <Select {...field} {...props} />
-      {meta.touched && meta.error && <Text color="red">{meta.error}</Text>}
+    <FormControl isInvalid={meta.touched && meta.error} isRequired>
+      <FormLabel>{label || props.name}</FormLabel>
+      <Field
+        as={Select}
+        {...field}
+        {...props}
+        validate={(value) => (!value ? "Required" : undefined)}
+      >
+        {options.map((option) => (
+          <option key={option.id} value={option.id}>
+            {option.titleEn}
+          </option>
+        ))}
+      </Field>
+      {meta.touched && meta.error && (
+        <FormErrorMessage>{meta.error}</FormErrorMessage>
+      )}
     </FormControl>
   );
 };

@@ -1,8 +1,8 @@
 import { Heading, useColorModeValue } from "@chakra-ui/react";
 import { GRAY_COLOR } from "../../lib/helpers";
-import Card from "../UI/Card";
+import Card from "./Card";
 
-const InputHeader = ({ title }) => {
+const CardHeader = ({ title }) => {
   const color = useColorModeValue(...GRAY_COLOR);
 
   return (
@@ -14,4 +14,4 @@ const InputHeader = ({ title }) => {
   );
 };
 
-export default InputHeader;
+export default CardHeader;

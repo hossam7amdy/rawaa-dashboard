@@ -31,7 +31,9 @@ const InputFile = ({ label, ...props }) => {
         {...rest}
         {...props}
       />
-      {meta.error && <FormHelperText color="red">{meta.error}</FormHelperText>}
+      {meta.error && (
+        <FormHelperText color="red.400">{meta.error}</FormHelperText>
+      )}
     </FormControl>
   );
 };

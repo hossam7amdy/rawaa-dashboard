@@ -8,7 +8,7 @@ import { CATEGORY_URL, FILE_URL } from "../../lib/urls";
 import { SUCCESS_TOAST } from "../../lib/helpers";
 import CustomButton from "../../components/UI/CustomButton";
 import PreviewImage from "../../components/UI/PreviewImage";
-import InputHeader from "../../components/Input/InputHeader";
+import CardHeader from "../../components/UI/CardHeader";
 import CustomInput from "../../components/Input/CustomInput";
 import InputFile from "../../components/Input/FileInput";
 import useFetch from "../../hooks/use-fetch";
@@ -53,11 +53,11 @@ const NewCategory = () => {
 
   return (
     <Box>
-      <InputHeader title={prevState ? "Edit Category" : "Add New Category"} />
+      <CardHeader title={prevState ? "Edit Category" : "Add New Category"} />
 
       <Card maxH="70vh">
         <Formik initialValues={initials} onSubmit={formSubmitHandler}>
-          {({ values, setFieldValue }) => (
+          {({ setFieldValue }) => (
             <Form>
               <Flex gap={10}>
                 <PreviewImage image={Imagepreview} />
