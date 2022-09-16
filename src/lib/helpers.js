@@ -1,4 +1,4 @@
-export const TIMEOUT_SEC = 5;
+export const TIMEOUT_SEC = 10;
 export const LIGHT_GRAY = Object.freeze(["gray.100", "gray.700"]);
 export const GRAY_COLOR = Object.freeze(["gray.400", "gray.500"]);
 
@@ -22,7 +22,7 @@ export const SUCCESS_TOAST = Object.freeze({
 export const FAILED_TOAST = Object.freeze({
   title: "Failed",
   description: "Error Occurred. Try again!",
-  status: "fail",
+  status: "error",
   duration: 5000,
   isClosable: true,
   position: "top",
