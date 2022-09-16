@@ -5,11 +5,11 @@ import { Box, Flex, VStack, useToast } from "@chakra-ui/react";
 
 import { ARABIC_WORD, ENGLISH_WORD, IMAGE_FILE } from "../../lib/validations";
 import { CATEGORY_URL, FILE_URL } from "../../lib/urls";
-import { SUCCESS_TOAST } from "../../lib/helpers";
+import { FAILED_TOAST, SUCCESS_TOAST } from "../../lib/helpers";
 import CustomButton from "../../components/UI/CustomButton";
 import PreviewImage from "../../components/UI/PreviewImage";
-import CardHeader from "../../components/UI/CardHeader";
 import CustomInput from "../../components/Input/CustomInput";
+import CardHeader from "../../components/UI/CardHeader";
 import InputFile from "../../components/Input/FileInput";
 import useFetch from "../../hooks/use-fetch";
 import Card from "../../components/UI/Card";
@@ -18,13 +18,12 @@ const NewCategory = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const { state: prevState } = useLocation();
-  const { isLoading, fetchAPI: sendData } = useFetch();
+  const { isLoading, error, fetchAPI: sendData } = useFetch();
   const [Imagepreview, setImagePreview] = useState(
     prevState ? `${FILE_URL}${prevState?.image}` : null
   );
 
   const formSubmitHandler = async (values, actions) => {
-    console.log(values);
     const formData = new FormData();
     for (const key in values) {
       formData.append(key, values[key]);
@@ -37,6 +36,11 @@ const NewCategory = () => {
 
     const url = `${CATEGORY_URL}/${prevState ? prevState.id : ""}`;
     await sendData(url, requestOptions);
+
+    if (error) {
+      toast(FAILED_TOAST);
+      return;
+    }
 
     toast(SUCCESS_TOAST);
 
