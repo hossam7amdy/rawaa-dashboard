@@ -76,3 +76,9 @@ export const ENGLISH_WORD = (word, len = 3) => {
     return `Title must be at least ${len} letters.`;
   }
 };
+
+export const RANGE_NUMBER = (num, min = 0, max = 0) => {
+  if (min > num || num > max) {
+    return `Number must be in range [${min} - ${max}]`;
+  }
+};
