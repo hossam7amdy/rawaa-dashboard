@@ -6,4 +6,5 @@ export const STAFF_URL = `${BASE_URL}${PREFIX}staff`;
 export const ORDER_URL = `${BASE_URL}${PREFIX}orders`;
 export const PRODUCT_URL = `${BASE_URL}${PREFIX}product`;
 export const CATEGORY_URL = `${BASE_URL}${PREFIX}category`;
+export const CUSTOMERS_URL = `${BASE_URL}${PREFIX}customers`;
 export const RESTAURANT_URL = `${BASE_URL}${PREFIX}restaurant`;

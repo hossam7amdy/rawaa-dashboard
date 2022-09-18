@@ -1,19 +1,19 @@
 import {
-  CircularProgress,
-  CircularProgressLabel,
   Flex,
-  HStack,
   Stat,
-  StatArrow,
-  StatHelpText,
-  StatLabel,
-  StatNumber,
   Text,
-  useColorModeValue,
   VStack,
+  HStack,
+  StatLabel,
+  StatArrow,
+  StatNumber,
+  StatHelpText,
+  CircularProgress,
+  useColorModeValue,
+  CircularProgressLabel,
 } from "@chakra-ui/react";
 
-import { GRAY_COLOR } from "../../lib/helpers";
+import { GRAY_COLOR } from "../../lib/config";
 import Card from "../UI/Card";
 
 const RevenueProgress = () => {

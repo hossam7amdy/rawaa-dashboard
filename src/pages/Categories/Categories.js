@@ -1,35 +1,56 @@
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Td, Th, Tr, Image, HStack, useToast } from "@chakra-ui/react";
+import {
+  Td,
+  Th,
+  Tr,
+  Image,
+  HStack,
+  useToast,
+  useDisclosure,
+} from "@chakra-ui/react";
 
-import { FAILED_TOAST, SUCCESS_TOAST } from "../../lib/helpers";
+import { FAILED_TOAST, SUCCESS_TOAST } from "../../lib/config";
 import { CATEGORY_URL, FILE_URL } from "../../lib/urls";
+import { CategoryContext } from "../../store/category";
 import CustomButton from "../../components/UI/CustomButton";
+import DeleteModal from "../../components/UI/DeleteModal";
 import TableBox from "../../components/table/TableBox";
 import useFetch from "../../hooks/use-fetch";
 
 const Categories = () => {
-  const {
-    isLoading,
-    error,
-    data: tableData,
-    fetchAPI: deleteRequest,
-  } = useFetch(`${CATEGORY_URL}/all`);
   const toast = useToast();
   const navigate = useNavigate();
+  const [categoryId, setCategoryId] = useState();
+  const { onOpen, onClose, isOpen } = useDisclosure();
+  const { isLoading, error, fetchRequest } = useFetch();
+  const { categoryList, getCategoryList, deleteCategory } =
+    useContext(CategoryContext);
+
+  useEffect(() => {
+    fetchRequest({ url: `${CATEGORY_URL}/all` }, getCategoryList);
+  }, []);
 
   const editCategoryHandler = (category) => {
-    navigate("/categories/new", { state: category });
+    navigate(`/categories/edit/${category.id}`, { state: category });
   };
 
-  const deleteCategoryHandler = async (id) => {
-    await deleteRequest(`${CATEGORY_URL}/${id}`, {
-      id,
-      method: "DELETE",
-    });
+  const deleteCategoryHandler = async () => {
+    await fetchRequest(
+      {
+        url: `${CATEGORY_URL}/${categoryId}`,
+        requestOptions: {
+          method: "DELETE",
+        },
+      },
+      deleteCategory
+    );
 
     if (error) {
       toast(FAILED_TOAST);
+      return;
     }
+
     if (!error && !isLoading) {
       toast(SUCCESS_TOAST);
     }
@@ -45,19 +66,19 @@ const Categories = () => {
     </Tr>
   );
 
-  const bodyRows = tableData.map((row) => (
-    <Tr key={row.id}>
-      <Td>{row.id}</Td>
+  const bodyRows = categoryList.map((category) => (
+    <Tr key={category.id}>
+      <Td>{category.id}</Td>
       <Td>
         <Image
-          src={FILE_URL + row.image}
-          alt={row.image}
+          src={FILE_URL + category.image}
+          alt={category.image}
           borderRadius="md"
           boxSize="50px"
         />
       </Td>
-      <Td>{row.titleEn}</Td>
-      <Td>{row.titleAr}</Td>
+      <Td>{category.titleEn}</Td>
+      <Td>{category.titleAr}</Td>
       <Td>
         <HStack>
           <CustomButton
@@ -65,14 +86,17 @@ const Categories = () => {
             size="xs"
             variant="outline"
             colorScheme="yellow"
-            onClick={editCategoryHandler.bind(null, row)}
+            onClick={editCategoryHandler.bind(null, category)}
           />
           <CustomButton
             name="Delete"
             size="xs"
             variant="outline"
             colorScheme="red"
-            onClick={deleteCategoryHandler.bind(null, row.id)}
+            onClick={() => {
+              onOpen();
+              setCategoryId(category.id);
+            }}
           />
         </HStack>
       </Td>
@@ -80,14 +104,22 @@ const Categories = () => {
   ));
 
   return (
-    <TableBox
-      title={"Categories"}
-      hasButton={true}
-      headerRows={headerRows}
-      bodyRows={bodyRows}
-      isLoading={isLoading}
-      error={error}
-    />
+    <>
+      <DeleteModal
+        isOpen={isOpen}
+        onClose={onClose}
+        header="Delete Category"
+        onDelete={deleteCategoryHandler}
+      />
+      <TableBox
+        error={error}
+        hasButton={true}
+        bodyRows={bodyRows}
+        title={"Categories"}
+        isLoading={isLoading}
+        headerRows={headerRows}
+      />
+    </>
   );
 };
 

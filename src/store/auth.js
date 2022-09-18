@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useBoolean } from "@chakra-ui/react";
 
 export const AuthContext = createContext({
-  loggedIn: null,
+  isLoggedIn: null,
   isSidebarOpen: null,
   login: () => {},
   logout: () => {},
@@ -11,21 +11,21 @@ export const AuthContext = createContext({
 
 const AuthProvider = (props) => {
   const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useBoolean(false);
   const token = localStorage.getItem("token");
-  const [loggedIn, setLoggedIn] = useState(token);
+  const [isLoggedIn, setIsLoggedIn] = useState(token);
+  const [isSidebarOpen, setIsSidebarOpen] = useBoolean(false);
 
   const loginHandler = () => {
     // TODO: Can you make it persist for a certian amount of time ??
+    setIsLoggedIn(true);
     localStorage.setItem("token", "yes");
-    setLoggedIn(true);
   };
 
   const logoutHandler = () => {
-    navigate("/", { replace: true });
-    localStorage.removeItem("token");
-    setLoggedIn(false);
     setIsSidebarOpen.off();
+    setIsLoggedIn(false);
+    localStorage.removeItem("token");
+    navigate("/", { replace: true });
   };
 
   const toggleSidebarHandler = () => {
@@ -33,7 +33,7 @@ const AuthProvider = (props) => {
   };
 
   const authContext = {
-    loggedIn,
+    isLoggedIn,
     isSidebarOpen,
     login: loginHandler,
     logout: logoutHandler,

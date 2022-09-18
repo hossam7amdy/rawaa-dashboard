@@ -1,30 +1,30 @@
 import { useContext } from "react";
 
 import {
-  Avatar,
-  Input,
-  InputGroup,
-  InputLeftElement,
   Flex,
-  IconButton,
-  Button,
-  FormControl,
-  useColorMode,
-  Badge,
   Menu,
-  MenuButton,
+  Badge,
+  Input,
+  Button,
+  Avatar,
   MenuList,
   MenuItem,
+  InputGroup,
+  IconButton,
+  MenuButton,
   MenuDivider,
+  FormControl,
+  useColorMode,
+  InputLeftElement,
 } from "@chakra-ui/react";
 
 import { getIconByName } from "../../lib/IconsFactory";
-import { AuthContext } from "../../contexts/auth-context";
+import { AuthContext } from "../../store/auth";
 
 const Header = () => {
   const { toggleColorMode } = useColorMode();
   const { colorMode } = useColorMode();
-  const { loggedIn, logout, toggleSidebar } = useContext(AuthContext);
+  const { isLoggedIn, toggleSidebar, logout } = useContext(AuthContext);
 
   const iconName = colorMode === "light" ? "moon" : "sun";
   const darkModeIcon = getIconByName(iconName);
@@ -38,7 +38,7 @@ const Header = () => {
       borderBottom="1px"
       gap="10px"
     >
-      {loggedIn && (
+      {isLoggedIn && (
         // FIXME: justify
         <Flex w={20} gap="10px">
           <IconButton
@@ -60,7 +60,7 @@ const Header = () => {
 
       <Flex gap="10px">
         <IconButton onClick={toggleColorMode} icon={darkModeIcon} />
-        {loggedIn && (
+        {isLoggedIn && (
           <Menu>
             <MenuButton
               as={Button}
@@ -93,38 +93,7 @@ const Header = () => {
             </MenuList>
           </Menu>
         )}
-        {/* {loggedIn && (
-          <Menu>
-            <MenuButton as={Button} p={3} pos="relative">
-              {getIconByName("orders", {
-                display: "flex",
-              })}
-              <Badge
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                h="15px"
-                w="15px"
-                bg="red"
-                rounded="50%"
-                pos="absolute"
-                color="white"
-                top="-1"
-                right="-1"
-              >
-                5
-              </Badge>
-            </MenuButton>
-            <MenuList>
-              <MenuItem>product1</MenuItem>
-              <MenuItem>product2</MenuItem>
-              <MenuItem>product3</MenuItem>
-              <MenuItem>product4</MenuItem>
-              <MenuItem>product5</MenuItem>
-            </MenuList>
-          </Menu>
-        )} */}
-        {loggedIn && (
+        {isLoggedIn && (
           <Menu>
             <MenuButton
               as={Button}

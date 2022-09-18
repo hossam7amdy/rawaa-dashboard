@@ -13,9 +13,9 @@ import {
   ListItem,
 } from "@chakra-ui/react";
 
-import { AuthContext } from "../../contexts/auth-context";
 import { getIconByName } from "../../lib/IconsFactory";
-import { SIDEBAR_LIST } from "../../lib/helpers";
+import { SIDEBAR_LIST } from "../../lib/config";
+import { AuthContext } from "../../store/auth";
 
 const Sidebar = () => {
   const { logout } = useContext(AuthContext);

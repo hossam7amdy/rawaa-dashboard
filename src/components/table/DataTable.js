@@ -7,7 +7,7 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { LIGHT_GRAY } from "../../lib/helpers";
+import { LIGHT_GRAY } from "../../lib/config";
 import LoadingSpinner from "../UI/LoadingSpinner";
 
 const DataTable = ({ isLoading, error, headerRows, bodyRows }) => {

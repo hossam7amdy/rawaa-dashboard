@@ -2,9 +2,9 @@ import { useContext } from "react";
 import { Text, useColorModeValue } from "@chakra-ui/react";
 import { AreaChart, XAxis, CartesianGrid, Tooltip, Area } from "recharts";
 
+import { AuthContext } from "../../store/auth";
+import { GRAY_COLOR } from "../../lib/config";
 import Card from "../UI/Card";
-import { GRAY_COLOR } from "../../lib/helpers";
-import { AuthContext } from "../../contexts/auth-context";
 
 const data = [
   { name: "January", Total: 1200 },

@@ -1,5 +1,5 @@
 import { Heading, useColorModeValue } from "@chakra-ui/react";
-import { GRAY_COLOR } from "../../lib/helpers";
+import { GRAY_COLOR } from "../../lib/config";
 import Card from "./Card";
 
 const CardHeader = ({ title }) => {

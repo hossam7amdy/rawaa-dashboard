@@ -5,7 +5,7 @@ import { VStack, Heading, InputLeftElement } from "@chakra-ui/react";
 import { VALIDATE_PASSWORD, VALIDATE_USERNAME } from "../lib/validations";
 import CustomInput from "../components/Input/CustomInput";
 import CustomButton from "../components/UI/CustomButton";
-import { AuthContext } from "../contexts/auth-context";
+import { AuthContext } from "../store/auth";
 import { getIconByName } from "../lib/IconsFactory";
 
 const Login = () => {
