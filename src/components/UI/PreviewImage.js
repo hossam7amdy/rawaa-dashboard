@@ -1,16 +1,15 @@
 import { Image } from "@chakra-ui/react";
 
-const PreviewImage = ({ image }) => {
+const PreviewImage = ({ image, ...props }) => {
   return (
     <Image
+      fallbackSrc="https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"
       rounded="full"
       boxSize="100px"
       justifyContent="center"
-      src={
-        image ||
-        "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"
-      }
+      src={image}
       alt="image placeholder"
+      {...props}
     />
   );
 };
