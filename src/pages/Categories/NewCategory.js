@@ -1,11 +1,12 @@
-import { useState } from "react";
 import { Form, Formik } from "formik";
+import { useContext, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Box, Flex, VStack, useToast } from "@chakra-ui/react";
 
 import { ARABIC_WORD, ENGLISH_WORD, IMAGE_FILE } from "../../lib/validations";
+import { FAILED_TOAST, SUCCESS_TOAST } from "../../lib/config";
 import { CATEGORY_URL, FILE_URL } from "../../lib/urls";
-import { FAILED_TOAST, SUCCESS_TOAST } from "../../lib/helpers";
+import { CategoryContext } from "../../store/category";
 import CustomButton from "../../components/UI/CustomButton";
 import PreviewImage from "../../components/UI/PreviewImage";
 import CustomInput from "../../components/Input/CustomInput";
@@ -18,24 +19,23 @@ const NewCategory = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const { state: prevState } = useLocation();
-  const { isLoading, error, fetchAPI: sendData } = useFetch();
+  const { isLoading, error, fetchRequest: sendData } = useFetch();
+  const { addNewCategory, editCategory } = useContext(CategoryContext);
   const [Imagepreview, setImagePreview] = useState(
     prevState ? `${FILE_URL}${prevState?.image}` : null
   );
 
-  const formSubmitHandler = async (values, actions) => {
+  const submitNewCategory = async (values, actions) => {
     const formData = new FormData();
     for (const key in values) {
       formData.append(key, values[key]);
     }
-
     const requestOptions = {
-      method: !prevState ? "POST" : "PUT",
+      method: "POST",
       body: formData,
     };
 
-    const url = `${CATEGORY_URL}/${prevState ? prevState.id : ""}`;
-    await sendData(url, requestOptions);
+    await sendData({ url: CATEGORY_URL, requestOptions }, addNewCategory);
 
     if (error) {
       toast(FAILED_TOAST);
@@ -46,13 +46,56 @@ const NewCategory = () => {
 
     actions.resetForm();
     setImagePreview(null);
+  };
+
+  const submitEditCategory = async (values) => {
+    // Sending image seperatelly
+    // const formImage = new FormData();
+    // formImage.append("image", values.image);
+    // await sendData(
+    //   {
+    //     url: `${CATEGORY_URL}/image/${prevState.id}`,
+    //     requestOptions: {
+    //       method: "PUT",
+    //       body: formImage,
+    //     },
+    //   },
+    //   editCategory
+    // );
+
+    // Send rest of the data
+    const formValues = new FormData();
+    for (const key in values) {
+      // if (key !== "image")
+      formValues.append(key, values[key]);
+    }
+    await sendData(
+      {
+        url: `${CATEGORY_URL}/${prevState.id}`,
+        requestOptions: {
+          method: "PUT",
+          body: formValues,
+        },
+      },
+      editCategory
+    );
+
+    toast(SUCCESS_TOAST);
     if (prevState) navigate(-1);
   };
 
+  const formSubmitHandler = async (values, actions) => {
+    if (!prevState) {
+      submitNewCategory(values, actions);
+    } else {
+      submitEditCategory(values);
+    }
+  };
+
   const initials = {
+    image: prevState?.image || "",
     titleAr: prevState?.titleAr || "",
     titleEn: prevState?.titleEn || "",
-    image: prevState?.image || "",
   };
 
   return (
