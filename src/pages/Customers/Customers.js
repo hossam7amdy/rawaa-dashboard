@@ -1,11 +1,21 @@
-import { Td, Th, Tr, Image, HStack, Button } from "@chakra-ui/react";
+import { Td, Th, Tr, Image } from "@chakra-ui/react";
 
-import { FILE_URL, PRODUCT_URL } from "../../lib/urls";
+import { FILE_URL, CUSTOMERS_URL } from "../../lib/urls";
+import { useEffect, useState } from "react";
 import TableBox from "../../components/table/TableBox";
 import useFetch from "../../hooks/use-fetch";
 
 const Customers = () => {
-  const { isLoading, error, data: tableData } = useFetch(`${PRODUCT_URL}/all`);
+  const [customers, setCustomers] = useState([]);
+  const { isLoading, error, fetchRequest: getAllCustomers } = useFetch();
+
+  useEffect(() => {
+    const getCustomersList = (data) => {
+      setCustomers(data);
+    };
+
+    getAllCustomers({ url: `${CUSTOMERS_URL}/all` }, getCustomersList);
+  }, [getAllCustomers, setCustomers]);
 
   const headerRows = (
     <Tr>
@@ -15,33 +25,27 @@ const Customers = () => {
     </Tr>
   );
 
-  const bodyRows = tableData.map((row) => (
-    <Tr key={row.id}>
-      <Td>{row.id}</Td>
+  const bodyRows = customers.map((customer) => (
+    <Tr key={customer.id}>
+      <Td>{customer.id}</Td>
       <Td>
         <Image
-          src={FILE_URL + row.image}
-          alt={row.image}
+          src={FILE_URL + customer.image}
+          alt={customer.image}
           rounded="md"
           boxSize="50px"
         />
-      </Td>
-      <Td>
-        <HStack>
-          <Button size="xs">Edit</Button>
-          <Button size="xs">Delete</Button>
-        </HStack>
       </Td>
     </Tr>
   ));
 
   return (
     <TableBox
+      error={error}
       title={"Customers"}
-      headerRows={headerRows}
       bodyRows={bodyRows}
       isLoading={isLoading}
-      error={error}
+      headerRows={headerRows}
     />
   );
 };

@@ -17,7 +17,7 @@ import { Form, Formik } from "formik";
 import Card from "../../components//UI/Card";
 import CustomInput from "../../components/Input/CustomInput";
 import CustomButton from "../../components/UI/CustomButton";
-import { GRAY_COLOR } from "../../lib/helpers";
+import { GRAY_COLOR } from "../../lib/config";
 
 const NewRestaurant = () => {
   const color = useColorModeValue(...GRAY_COLOR);
