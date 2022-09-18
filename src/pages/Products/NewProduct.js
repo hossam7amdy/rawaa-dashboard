@@ -1,152 +1,226 @@
-import { useState } from "react";
-import { Formik, Form, Field } from "formik";
-import {
-  FormControl,
-  FormLabel,
-  Input,
-  HStack,
-  Button,
-  Heading,
-  VStack,
-  Checkbox,
-  Text,
-} from "@chakra-ui/react";
+import { Formik, Form } from "formik";
+import { useContext, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Box, Flex, VStack, HStack, useToast } from "@chakra-ui/react";
 
-import { PRODUCT_URL } from "../../lib/urls";
-import LoadingSpinner from "../../components/UI/LoadingSpinner";
+import {
+  ARABIC_WORD,
+  ENGLISH_WORD,
+  IMAGE_FILE,
+  RANGE_NUMBER,
+} from "../../lib/validations";
+import { FAILED_TOAST, SUCCESS_TOAST } from "../../lib/config";
+import { CATEGORY_URL, FILE_URL, PRODUCT_URL } from "../../lib/urls";
+import { CategoryContext } from "../../store/category";
+import PreviewImage from "../../components/UI/PreviewImage";
+import CustomButton from "../../components/UI/CustomButton";
 import CustomInput from "../../components/Input/CustomInput";
+import CardHeader from "../../components/UI/CardHeader";
+import InputFile from "../../components/Input/FileInput";
 import Selection from "../../components/Input/Selection";
 import useFetch from "../../hooks/use-fetch";
 import Card from "../../components/UI/Card";
 
 const NewProduct = () => {
-  const [image, setImage] = useState(null);
-  const {
-    isLoading,
-    error,
-    data: categoriesList,
-    fetchAPI: sendData,
-  } = useFetch(`${PRODUCT_URL}/all`);
+  const toast = useToast();
+  const navigate = useNavigate();
+  const { state: prevState } = useLocation();
+  const { isLoading, error, fetchRequest } = useFetch();
+  const { categoryList, getCategoryList } = useContext(CategoryContext);
+  const [Imagepreview, setImagePreview] = useState(
+    prevState ? `${FILE_URL}${prevState?.image}` : null
+  );
 
-  const formSubmitHandler = async (values, actions) => {
+  useEffect(() => {
+    fetchRequest({ url: `${CATEGORY_URL}/all` }, getCategoryList);
+    // eslint-disable-next-line
+  }, []);
+
+  const submitNewProduct = async (values, actions) => {
     const formData = new FormData();
     for (const key in values) {
       formData.append(key, values[key]);
     }
-    formData.append("image", image);
-
     const requestOptions = {
       method: "POST",
       body: formData,
     };
 
-    await sendData(PRODUCT_URL, requestOptions);
+    await fetchRequest({ url: PRODUCT_URL, requestOptions });
+
+    if (error) {
+      toast(FAILED_TOAST);
+      return;
+    }
+
+    toast(SUCCESS_TOAST);
 
     actions.resetForm();
+    setImagePreview(null);
   };
 
-  const initial = {
-    titleAr: "",
-    titleEn: "",
-    categoryId: "",
-    smallSizePrice: "",
-    mediumSizePrice: "",
-    bigSizePrice: "",
-    discountValue: "",
-    calories: "",
-    // hasTaste: false,
+  const submitEditProduct = async (values) => {
+    console.log(values);
+    // Sending image seperatelly
+    if (typeof values.image !== "string") {
+      const formImage = new FormData();
+      formImage.append("image", values.image);
+      await fetchRequest({
+        url: `${PRODUCT_URL}/image/${prevState.id}`,
+        requestOptions: {
+          method: "PUT",
+          body: formImage,
+        },
+      });
+    }
+
+    // Send rest of the data
+    const formValues = new FormData();
+    for (const key in values) {
+      if (key !== "image") {
+        console.log(key, values[key]);
+        formValues.append(key, values[key]);
+      }
+    }
+    await fetchRequest({
+      url: `${PRODUCT_URL}/${prevState.id}`,
+      requestOptions: {
+        method: "PUT",
+        body: formValues,
+      },
+    });
+
+    toast(SUCCESS_TOAST);
+    if (prevState) navigate(-2);
+  };
+
+  const formSubmitHandler = async (values, actions) => {
+    if (prevState) {
+      submitEditProduct(values);
+    } else {
+      submitNewProduct(values, actions);
+    }
+  };
+
+  const initials = {
+    image: prevState?.image || "",
+    titleAr: prevState?.titleAr || "",
+    titleEn: prevState?.titleEn || "",
+    hasTaste: prevState?.hasTaste || "",
+    calories: prevState?.calories || "",
+    categoryId: prevState?.categoryId || "",
+    bigSizePrice: prevState?.bigSizePrice || "",
+    discountValue: prevState?.discountValue || "",
+    smallSizePrice: prevState?.smallSizePrice || "",
+    mediumSizePrice: prevState?.mediumSizePrice || "",
   };
 
   return (
-    <VStack spacing={6} mt={6} w="90%">
-      <Heading textAlign="center" size="md">
-        Adding New Product
-      </Heading>
+    <Box>
+      <CardHeader title={prevState ? "Edit Product" : "Add New Product"} />
+
       <Card maxH="70vh">
-        {isLoading && (
-          <VStack>
-            <LoadingSpinner />
-            <Text>Form is Loading...</Text>
-          </VStack>
-        )}
-        {error && (
-          <Text color="crimson">Failed to fetch categories. Try again!</Text>
-        )}
-        {!isLoading && !error && (
-          <Formik initialValues={initial} onSubmit={formSubmitHandler}>
+        <Formik initialValues={initials} onSubmit={formSubmitHandler}>
+          {({ setFieldValue }) => (
             <Form>
-              <VStack spacing={4}>
-                <CustomInput
-                  name="titleAr"
-                  type="text"
-                  label="Title in Arabic"
-                  placeholder="بيبروني"
-                />
-                <CustomInput
-                  name="titleEn"
-                  type="text"
-                  label="Title in English"
-                  placeholder="Pepperoni"
-                />
-                <Selection name="categoryId" placeholder="choose category">
-                  {categoriesList.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.titleEn}
-                    </option>
-                  ))}
-                </Selection>
-                <FormControl>
-                  <FormLabel>product image</FormLabel>
-                  <Input
+              <Flex gap={10}>
+                <PreviewImage image={Imagepreview} />
+
+                <VStack minW="350px" spacing={4} align="start">
+                  <InputFile
                     name="image"
-                    type="file"
-                    variant="flushed"
-                    onChange={(event) => setImage(event.target.files[0])}
+                    label="Image"
+                    validate={IMAGE_FILE}
+                    onChange={(event) => {
+                      setFieldValue("image", event.target.files[0]);
+                      setImagePreview(
+                        event.target.files[0]
+                          ? URL.createObjectURL(event.target.files[0])
+                          : null
+                      );
+                    }}
                   />
-                </FormControl>
-                <HStack spacing={5} w="100%">
                   <CustomInput
-                    name="smallSizePrice"
+                    type="text"
+                    name="titleAr"
+                    placeholder="بيبروني"
+                    label="Title in Arabic"
+                    validate={ARABIC_WORD}
+                  />
+                  <CustomInput
+                    type="text"
+                    name="titleEn"
+                    placeholder="Pepperoni"
+                    label="Title in English"
+                    validate={ENGLISH_WORD}
+                  />
+                  <Selection
+                    name="categoryId"
+                    label="Select a category"
+                    placeholder="select an option"
+                    options={categoryList}
+                  />
+                  <CustomInput
                     type="number"
-                    label="small price"
-                    placeholder="10"
-                  />
-                  <CustomInput
-                    type="number"
-                    name="mediumSizePrice"
-                    label="medium price"
-                    placeholder="20"
-                  />
-                  <CustomInput
-                    name="bigSizePrice"
-                    type="number"
-                    label="large price"
-                    placeholder="30"
-                  />
-                </HStack>
-                <HStack w="100%">
-                  <CustomInput
-                    name="discountValue"
-                    type="number"
-                    label="discount value"
-                    placeholder="23%"
-                  />
-                  <CustomInput
                     name="calories"
-                    type="number"
-                    placeholder="1500"
+                    label="Calories"
+                    placeholder="500"
+                    validate={(value) => RANGE_NUMBER(value, 0, 1500)}
                   />
-                </HStack>
-                <Field as={Checkbox} name="hasTaste">
-                  Has Tastes
-                </Field>
-                <Button type="submit">Submit</Button>
-              </VStack>
+                  <CustomInput
+                    type="number"
+                    name="hasTaste"
+                    placeholder="3"
+                    label="Number of tastes"
+                    validate={(value) => RANGE_NUMBER(value, 1, 3)}
+                  />
+                  <CustomInput
+                    type="number"
+                    placeholder="23%"
+                    name="discountValue"
+                    label="Discount value"
+                    validate={(value) => RANGE_NUMBER(value, 0, 999)}
+                  />
+                  <HStack spacing={4}>
+                    <CustomInput
+                      type="number"
+                      placeholder="10"
+                      label="Small price"
+                      name="smallSizePrice"
+                      validate={(value) => RANGE_NUMBER(value, 1, 999)}
+                    />
+                    <CustomInput
+                      type="number"
+                      placeholder="20"
+                      label="Medium price"
+                      name="mediumSizePrice"
+                      validate={(value) => RANGE_NUMBER(value, 0, 999)}
+                    />
+                    <CustomInput
+                      type="number"
+                      placeholder="30"
+                      name="bigSizePrice"
+                      label="Large price"
+                      validate={(value) => RANGE_NUMBER(value, 0, 150)}
+                    />
+                  </HStack>
+                  <CustomButton
+                    type="submit"
+                    colorScheme="teal"
+                    isDisabled={isLoading}
+                    name={
+                      !isLoading &&
+                      (!prevState ? "Add Product" : "Edit Product")
+                    }
+                  />
+                </VStack>
+              </Flex>
             </Form>
-          </Formik>
-        )}
+          )}
+        </Formik>
+        {/* )} */}
       </Card>
-    </VStack>
+    </Box>
   );
 };
 

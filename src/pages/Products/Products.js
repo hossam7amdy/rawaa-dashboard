@@ -1,29 +1,67 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Td, Th, Tr, Image, HStack } from "@chakra-ui/react";
+import {
+  Td,
+  Th,
+  Tr,
+  Image,
+  HStack,
+  useToast,
+  useDisclosure,
+} from "@chakra-ui/react";
 
 import { FILE_URL, PRODUCT_URL } from "../../lib/urls";
 import CustomButton from "../../components/UI/CustomButton";
-import TableBox from "../../components/table/TableBox";
 import useFetch from "../../hooks/use-fetch";
+import TableBox from "../../components/table/TableBox";
+import { FAILED_TOAST, SUCCESS_TOAST } from "../../lib/config";
+import DeleteModal from "../../components/UI/DeleteModal";
 
 const Products = () => {
-  const {
-    isLoading,
-    error,
-    data: tableData,
-    fetchAPI: deleteRequest,
-  } = useFetch(`${PRODUCT_URL}/all`);
-
+  const toast = useToast();
   const navigate = useNavigate();
+  const [productId, setProductId] = useState();
+  const [products, setProducts] = useState([]);
+  const { onOpen, onClose, isOpen } = useDisclosure();
+  const { error, isLoading, fetchRequest } = useFetch();
 
-  const viewItemHandler = (id) => {
-    navigate(`/products/${id}`);
+  useEffect(() => {
+    const getProductList = (data) => {
+      setProducts(data);
+    };
+
+    fetchRequest({ url: `${PRODUCT_URL}/all` }, getProductList);
+  }, [fetchRequest]);
+
+  const viewProductHandler = (product) => {
+    navigate(`/products/${product.id}`, { state: product });
   };
 
-  const deleteItemHandler = async (id) => {
-    await deleteRequest(PRODUCT_URL + id, {
-      method: "DELETE",
-    });
+  const deleteProductHandler = async () => {
+    const deleteProduct = (dataObj) => {
+      setProducts((prevState) =>
+        prevState.filter((item) => item.id !== dataObj.id)
+      );
+    };
+
+    await fetchRequest(
+      {
+        url: `${PRODUCT_URL}/${productId}`,
+        requestOptions: {
+          method: "DELETE",
+        },
+      },
+      deleteProduct
+    );
+
+    if (error) {
+      toast(FAILED_TOAST);
+      return;
+    }
+
+    if (!error && !isLoading) {
+      toast(SUCCESS_TOAST);
+    }
   };
 
   const headerRows = (
@@ -31,7 +69,6 @@ const Products = () => {
       <Th>id</Th>
       <Th>image</Th>
       <Th>title</Th>
-      <Th>category</Th>
       <Th>small price</Th>
       <Th>medium price</Th>
       <Th>large price</Th>
@@ -42,25 +79,26 @@ const Products = () => {
     </Tr>
   );
 
-  const bodyRows = tableData.map((row) => (
-    <Tr key={row.id}>
-      <Td>{row.id}</Td>
+  const bodyRows = products.map((product) => (
+    <Tr key={product.id}>
+      <Td>{product.id}</Td>
       <Td>
         <Image
-          src={FILE_URL + row.image}
-          alt={row.image}
           rounded="md"
           boxSize="50px"
+          alt={product.image}
+          src={FILE_URL + product.image}
         />
       </Td>
-      <Td>{row.titleEn}</Td>
-      <Td>{row.categoryId}</Td>
-      <Td>{row.smallSizePrice}L.E</Td>
-      <Td>{row.mediumSizePrice}L.E</Td>
-      <Td>{row.bigSizePrice}L.E</Td>
-      <Td>{row.discountValue}%</Td>
-      <Td>{row.calories}</Td>
-      <Td>{row.hasTaste}</Td>
+      <Td>{product.titleEn}</Td>
+      <Td>{product.smallSizePrice}L.E</Td>
+      <Td>{`${
+        product.mediumSizePrice ? product.mediumSizePrice + "L.E" : "-"
+      }`}</Td>
+      <Td>{`${product.bigSizePrice ? product.bigSizePrice + "L.E" : "-"}`}</Td>
+      <Td>{product.discountValue ? product.discountValue + "%" : "-"}</Td>
+      <Td>{product.calories ? product.calories : "-"}</Td>
+      <Td>{product.hasTaste}</Td>
       <Td>
         <HStack>
           <CustomButton
@@ -68,14 +106,17 @@ const Products = () => {
             size="xs"
             variant="outline"
             colorScheme="green"
-            onClick={viewItemHandler.bind(null, row.id)}
+            onClick={viewProductHandler.bind(null, product)}
           />
           <CustomButton
             name="Delete"
             size="xs"
             variant="outline"
             colorScheme="red"
-            onClick={deleteItemHandler.bind(null, row.id)}
+            onClick={() => {
+              onOpen();
+              setProductId(product.id);
+            }}
           />
         </HStack>
       </Td>
@@ -83,14 +124,23 @@ const Products = () => {
   ));
 
   return (
-    <TableBox
-      title={"Products"}
-      hasButton={true}
-      headerRows={headerRows}
-      bodyRows={bodyRows}
-      isLoading={isLoading}
-      error={error}
-    />
+    <>
+      <DeleteModal
+        isOpen={isOpen}
+        onClose={onClose}
+        header="Delete Category"
+        onDelete={deleteProductHandler}
+      />
+      <TableBox
+        error={error}
+        hasButton={true}
+        title={"Products"}
+        bodyRows={bodyRows}
+        products={products}
+        isLoading={isLoading}
+        headerRows={headerRows}
+      />
+    </>
   );
 };
 
