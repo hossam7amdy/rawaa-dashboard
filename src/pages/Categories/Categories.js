@@ -29,13 +29,18 @@ const Categories = () => {
 
   useEffect(() => {
     fetchRequest({ url: `${CATEGORY_URL}/all` }, getCategoryList);
-  }, []);
+    // eslint-disable-next-line
+  }, [fetchRequest]);
 
   const editCategoryHandler = (category) => {
     navigate(`/categories/edit/${category.id}`, { state: category });
   };
 
   const deleteCategoryHandler = async () => {
+    const applyDelete = (data) => {
+      deleteCategory(data.id);
+    };
+
     await fetchRequest(
       {
         url: `${CATEGORY_URL}/${categoryId}`,
@@ -43,7 +48,7 @@ const Categories = () => {
           method: "DELETE",
         },
       },
-      deleteCategory
+      applyDelete
     );
 
     if (error) {
