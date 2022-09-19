@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Td, Th, Tr, Text, useColorModeValue } from "@chakra-ui/react";
+import { Td, Th, Tr, Text, useColorModeValue, HStack } from "@chakra-ui/react";
 
 import { STAFF_URL } from "../../lib/urls";
 import TableBox from "../../components/table/TableBox";
@@ -23,6 +23,7 @@ const formatDate = function (date, locale) {
 
 const Staff = () => {
   const [staff, setStaff] = useState([]);
+  // const
   const { isLoading, error, fetchRequest } = useFetch();
   const redColor = useColorModeValue("red.200", "red.400");
   const greenColor = useColorModeValue("green.200", "green.400");
@@ -65,12 +66,20 @@ const Staff = () => {
         </Text>
       </Td>
       <Td>
-        <CustomButton
-          size="xs"
-          name="Edit State"
-          variant="outline"
-          colorScheme="yellow"
-        />
+        <HStack>
+          <CustomButton
+            size="xs"
+            name="Edit State"
+            variant="outline"
+            colorScheme="yellow"
+          />
+          <CustomButton
+            size="xs"
+            name="Delete"
+            variant="outline"
+            colorScheme="red"
+          />
+        </HStack>
       </Td>
     </Tr>
   ));
