@@ -48,27 +48,36 @@ const NewCategory = () => {
     setImagePreview(null);
   };
 
-  const submitEditCategory = async (values) => {
-    // Sending image seperatelly
-    // const formImage = new FormData();
-    // formImage.append("image", values.image);
-    // await sendData(
-    //   {
-    //     url: `${CATEGORY_URL}/image/${prevState.id}`,
-    //     requestOptions: {
-    //       method: "PUT",
-    //       body: formImage,
-    //     },
-    //   },
-    //   editCategory
-    // );
+  // Handling Image PUT request seperatelly
+  const editImageHandler = async (imageFile) => {
+    if (!prevState || IMAGE_FILE(imageFile)) return;
 
-    // Send rest of the data
+    const formImage = new FormData();
+    formImage.append("image", imageFile);
+
+    try {
+      const response = await fetch(`${CATEGORY_URL}/image/${prevState.id}`, {
+        method: "PUT",
+        body: formImage,
+      });
+
+      const data = await response.json();
+      editCategory(data);
+    } catch (err) {
+      console.error(`💥💥${err}`);
+      toast(FAILED_TOAST);
+    }
+  };
+
+  const submitEditCategory = async (values) => {
+    // rest values request
     const formValues = new FormData();
     for (const key in values) {
-      // if (key !== "image")
-      formValues.append(key, values[key]);
+      if (key !== "image") {
+        formValues.append(key, values[key]);
+      }
     }
+
     await sendData(
       {
         url: `${CATEGORY_URL}/${prevState.id}`,
@@ -80,8 +89,13 @@ const NewCategory = () => {
       editCategory
     );
 
+    if (error) {
+      toast(FAILED_TOAST);
+      return;
+    }
+
     toast(SUCCESS_TOAST);
-    if (prevState) navigate(-1);
+    navigate(-1);
   };
 
   const formSubmitHandler = async (values, actions) => {
@@ -115,6 +129,7 @@ const NewCategory = () => {
                     label="Image"
                     validate={IMAGE_FILE}
                     onChange={(event) => {
+                      editImageHandler(event.target.files[0]);
                       setFieldValue("image", event.target.files[0]);
                       setImagePreview(
                         event.target.files[0]

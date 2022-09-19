@@ -59,29 +59,35 @@ const NewProduct = () => {
     setImagePreview(null);
   };
 
-  const submitEditProduct = async (values) => {
-    console.log(values);
-    // Sending image seperatelly
-    if (typeof values.image !== "string") {
-      const formImage = new FormData();
-      formImage.append("image", values.image);
-      await fetchRequest({
+  // Handling Image PUT request seperatelly
+  const editImageHandler = async (imageFile) => {
+    if (!prevState || IMAGE_FILE(imageFile)) return;
+
+    const formImage = new FormData();
+    formImage.append("image", imageFile);
+
+    try {
+      await fetch({
         url: `${PRODUCT_URL}/image/${prevState.id}`,
         requestOptions: {
           method: "PUT",
           body: formImage,
         },
       });
+    } catch (err) {
+      console.error(`💥💥${err}`);
+      toast(FAILED_TOAST);
     }
+  };
 
-    // Send rest of the data
+  const submitEditProduct = async (values) => {
     const formValues = new FormData();
     for (const key in values) {
       if (key !== "image") {
-        console.log(key, values[key]);
         formValues.append(key, values[key]);
       }
     }
+
     await fetchRequest({
       url: `${PRODUCT_URL}/${prevState.id}`,
       requestOptions: {
@@ -90,8 +96,13 @@ const NewProduct = () => {
       },
     });
 
+    if (error) {
+      toast(FAILED_TOAST);
+      return;
+    }
+
     toast(SUCCESS_TOAST);
-    if (prevState) navigate(-2);
+    navigate(-2);
   };
 
   const formSubmitHandler = async (values, actions) => {
@@ -132,6 +143,7 @@ const NewProduct = () => {
                     label="Image"
                     validate={IMAGE_FILE}
                     onChange={(event) => {
+                      editImageHandler(event.target.files[0]);
                       setFieldValue("image", event.target.files[0]);
                       setImagePreview(
                         event.target.files[0]
@@ -179,7 +191,7 @@ const NewProduct = () => {
                     placeholder="23%"
                     name="discountValue"
                     label="Discount value"
-                    validate={(value) => RANGE_NUMBER(value, 0, 999)}
+                    validate={(value) => RANGE_NUMBER(value, 0, 99)}
                   />
                   <HStack spacing={4}>
                     <CustomInput
@@ -201,7 +213,7 @@ const NewProduct = () => {
                       placeholder="30"
                       name="bigSizePrice"
                       label="Large price"
-                      validate={(value) => RANGE_NUMBER(value, 0, 150)}
+                      validate={(value) => RANGE_NUMBER(value, 0, 999)}
                     />
                   </HStack>
                   <CustomButton
