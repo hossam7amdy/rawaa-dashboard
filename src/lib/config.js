@@ -1,4 +1,4 @@
-export const TIMEOUT_SEC = 10;
+export const TIMEOUT_SEC = 30;
 export const LIGHT_GRAY = Object.freeze(["gray.100", "gray.700"]);
 export const GRAY_COLOR = Object.freeze(["gray.400", "gray.500"]);
 
