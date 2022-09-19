@@ -3,11 +3,10 @@ export const LIGHT_GRAY = Object.freeze(["gray.100", "gray.700"]);
 export const GRAY_COLOR = Object.freeze(["gray.400", "gray.500"]);
 
 export const SIDEBAR_LIST = Object.freeze([
-  "Customers",
   "Orders",
-  "Staff",
-  "Categories",
   "Products",
+  "Categories",
+  "Staff",
   "Restaurants",
 ]);
 

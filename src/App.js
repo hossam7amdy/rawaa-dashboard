@@ -11,7 +11,6 @@ import Restaurants from "./pages/Restaurants/Restaurants";
 import NewCategory from "./pages/Categories/NewCategory";
 import Categories from "./pages/Categories/Categories";
 import NewProduct from "./pages/Products/NewProduct";
-import Customers from "./pages/Customers/Customers";
 import NewStaff from "./pages/Staff/NewStaff";
 import NotFound from "./pages/NotFound";
 import Products from "./pages/Products/Products";
@@ -44,7 +43,6 @@ const App = () => {
                 <Route path="/">
                   <Route index element={<Home />} />
                   <Route path="orders" element={<Orders />} />
-                  <Route path="customers" element={<Customers />} />
                   <Route path="staff">
                     <Route index element={<Staff />} />
                     <Route path="new" element={<NewStaff />} />
