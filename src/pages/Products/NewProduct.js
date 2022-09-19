@@ -170,7 +170,9 @@ const NewProduct = () => {
                     name="categoryId"
                     label="Select a category"
                     placeholder="select an option"
-                    options={categoryList}
+                    options={categoryList.map((category) => {
+                      return { key: category.id, value: category.titleEn };
+                    })}
                   />
                   <CustomInput
                     type="number"

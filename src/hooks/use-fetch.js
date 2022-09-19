@@ -22,15 +22,14 @@ const useFetch = () => {
 
     try {
       const fetchPro = requestOptions ? fetch(url, requestOptions) : fetch(url);
+
       const response = await Promise.race([fetchPro, timeout(TIMEOUT_SEC)]);
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(response.message || "Request failed");
+        throw new Error(data.message || "Request failed");
       }
-
-      const data = await response.json();
       if (!applyData) return;
-      console.log(data);
       applyData(data);
     } catch (err) {
       setError(err.message);

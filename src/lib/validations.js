@@ -29,7 +29,7 @@ export const VALIDATE_PASSWORD = (password, len = 6) => {
     return `Password must be at least ${len} letters.`;
   }
   if (!PASSWORD.test(password)) {
-    return "Invalid password";
+    return "Password must contains english letters and numbers";
   }
 };
 
