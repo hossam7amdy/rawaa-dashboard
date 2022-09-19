@@ -21,14 +21,12 @@ const CategoryProvider = (props) => {
 
   const editCategoryHandler = (category) => {
     setCategoryList((prevState) =>
-      prevState.map((item) => (item.id === category ? category : item))
+      prevState.map((item) => (item.id === category.id ? category : item))
     );
   };
 
-  const deleteCategoryHandler = (dataObj) => {
-    setCategoryList((prevState) =>
-      prevState.filter((item) => item.id !== dataObj.id)
-    );
+  const deleteCategoryHandler = (id) => {
+    setCategoryList((prevState) => prevState.filter((item) => item.id !== id));
   };
 
   const categoryContext = {
