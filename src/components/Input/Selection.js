@@ -18,15 +18,13 @@ const Selection = ({ options, label, ...props }) => {
         {...props}
         validate={(value) => (!value ? "Required" : undefined)}
       >
-        {options.map((option) => (
-          <option key={option.id} value={option.id}>
-            {option.titleEn}
+        {options.map((option, idx) => (
+          <option key={idx} value={option.key}>
+            {option.value}
           </option>
         ))}
       </Field>
-      {meta.touched && meta.error && (
-        <FormErrorMessage>{meta.error}</FormErrorMessage>
-      )}
+      <FormErrorMessage>{meta.error}</FormErrorMessage>
     </FormControl>
   );
 };
