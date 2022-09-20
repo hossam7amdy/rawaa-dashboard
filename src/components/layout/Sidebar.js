@@ -15,7 +15,7 @@ import {
 
 import { getIconByName } from "../../lib/IconsFactory";
 import { SIDEBAR_LIST } from "../../lib/config";
-import { AuthContext } from "../../store/auth";
+import { AuthContext } from "../../context/auth";
 
 const Sidebar = () => {
   const { logout } = useContext(AuthContext);

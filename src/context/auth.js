@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useBoolean } from "@chakra-ui/react";
 
 export const AuthContext = createContext({
+  user: {},
   isLoggedIn: null,
   isSidebarOpen: null,
   login: () => {},

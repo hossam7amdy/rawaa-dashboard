@@ -1,23 +1,12 @@
-import { useEffect, useState } from "react";
 import { Td, Th, Tr, HStack } from "@chakra-ui/react";
 
-import { RESTAURANT_URL } from "../../lib/urls";
-import TableBox from "../../components/table/TableBox";
-import useFetch from "../../hooks/use-fetch";
 import RestaurantState from "../../components/restaurant/RestaurantState";
 import CustomButton from "../../components/UI/CustomButton";
+import useQueryData from "../../hooks/useQueryData";
+import TableBox from "../../components/table/TableBox";
 
 const Restaurants = () => {
-  const [restaurants, setRestaurants] = useState([]);
-  const { isLoading, error, fetchRequest } = useFetch();
-
-  useEffect(() => {
-    const applyRestaurants = (data) => {
-      setRestaurants(data);
-    };
-
-    fetchRequest({ url: `${RESTAURANT_URL}/all` }, applyRestaurants);
-  }, [fetchRequest]);
+  const { isLoading, error, data: restaurants } = useQueryData("restaurants");
 
   const headerRows = (
     <Tr>
@@ -30,7 +19,7 @@ const Restaurants = () => {
     </Tr>
   );
 
-  const bodyRows = restaurants.map((branch) => (
+  const bodyRows = restaurants?.map((branch) => (
     <Tr key={branch.id}>
       <Td>{branch.id}</Td>
       <Td>{branch.nameEn}</Td>
@@ -60,12 +49,12 @@ const Restaurants = () => {
 
   return (
     <TableBox
-      title={"Restaurants"}
-      headerRows={headerRows}
-      bodyRows={bodyRows}
-      isLoading={isLoading}
       hasButton={true}
-      error={error}
+      bodyRows={bodyRows}
+      title={"Restaurants"}
+      isLoading={isLoading}
+      error={error?.message}
+      headerRows={headerRows}
     />
   );
 };

@@ -1,5 +1,6 @@
+import axios from "axios";
+import { useState } from "react";
 import { Formik, Form } from "formik";
-import { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Box, Flex, VStack, HStack, useToast } from "@chakra-ui/react";
 
@@ -9,73 +10,70 @@ import {
   IMAGE_FILE,
   RANGE_NUMBER,
 } from "../../lib/validations";
-import { FAILED_TOAST, SUCCESS_TOAST } from "../../lib/config";
-import { CATEGORY_URL, FILE_URL, PRODUCT_URL } from "../../lib/urls";
-import { CategoryContext } from "../../store/category";
+import { FAILED_TOAST, PENDING_TOAST, SUCCESS_TOAST } from "../../lib/config";
+import { FILE_URL, PRODUCT_URL } from "../../lib/urls";
 import PreviewImage from "../../components/UI/PreviewImage";
+import useQueryData from "../../hooks/useQueryData";
 import CustomButton from "../../components/UI/CustomButton";
 import CustomInput from "../../components/Input/CustomInput";
 import CardHeader from "../../components/UI/CardHeader";
 import InputFile from "../../components/Input/FileInput";
 import Selection from "../../components/Input/Selection";
-import useFetch from "../../hooks/use-fetch";
 import Card from "../../components/UI/Card";
 
 const NewProduct = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const { state: prevState } = useLocation();
-  const { isLoading, error, fetchRequest } = useFetch();
-  const { categoryList, getCategoryList } = useContext(CategoryContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const { data: categoryList } = useQueryData("categories");
   const [Imagepreview, setImagePreview] = useState(
     prevState ? `${FILE_URL}${prevState?.image}` : null
   );
-
-  useEffect(() => {
-    fetchRequest({ url: `${CATEGORY_URL}/all` }, getCategoryList);
-    // eslint-disable-next-line
-  }, []);
 
   const submitNewProduct = async (values, actions) => {
     const formData = new FormData();
     for (const key in values) {
       formData.append(key, values[key]);
     }
-    const requestOptions = {
-      method: "POST",
-      body: formData,
-    };
 
-    await fetchRequest({ url: PRODUCT_URL, requestOptions });
+    try {
+      setIsLoading(true);
 
-    if (error) {
+      const config = {
+        url: PRODUCT_URL,
+        method: "post",
+        data: formData,
+      };
+      await axios(config);
+
+      toast(SUCCESS_TOAST);
+      actions.resetForm();
+      setImagePreview(null);
+    } catch (err) {
       toast(FAILED_TOAST);
-      return;
+    } finally {
+      setIsLoading(false);
     }
-
-    toast(SUCCESS_TOAST);
-
-    actions.resetForm();
-    setImagePreview(null);
   };
 
-  // Handling Image PUT request seperatelly
+  // uploading images seperatelly
   const editImageHandler = async (imageFile) => {
     if (!prevState || IMAGE_FILE(imageFile)) return;
 
-    const formImage = new FormData();
-    formImage.append("image", imageFile);
-
     try {
-      await fetch({
+      toast(PENDING_TOAST);
+      const formImage = new FormData();
+      formImage.append("image", imageFile);
+
+      const config = {
         url: `${PRODUCT_URL}/image/${prevState.id}`,
-        requestOptions: {
-          method: "PUT",
-          body: formImage,
-        },
-      });
+        method: "put",
+        data: formImage,
+      };
+      await axios(config);
+      toast(SUCCESS_TOAST);
     } catch (err) {
-      console.error(`💥💥${err}`);
       toast(FAILED_TOAST);
     }
   };
@@ -88,24 +86,27 @@ const NewProduct = () => {
       }
     }
 
-    await fetchRequest({
-      url: `${PRODUCT_URL}/${prevState.id}`,
-      requestOptions: {
-        method: "PUT",
-        body: formValues,
-      },
-    });
+    try {
+      setIsLoading(true);
 
-    if (error) {
+      const config = {
+        url: `${PRODUCT_URL}/${prevState.id}`,
+        method: "put",
+        data: formValues,
+      };
+
+      await axios(config);
+
+      toast(SUCCESS_TOAST);
+      navigate(-2);
+    } catch (err) {
       toast(FAILED_TOAST);
-      return;
+    } finally {
+      setIsLoading(false);
     }
-
-    toast(SUCCESS_TOAST);
-    navigate(-2);
   };
 
-  const formSubmitHandler = async (values, actions) => {
+  const formSubmitHandler = (values, actions) => {
     if (prevState) {
       submitEditProduct(values);
     } else {
@@ -170,7 +171,7 @@ const NewProduct = () => {
                     name="categoryId"
                     label="Select a category"
                     placeholder="select an option"
-                    options={categoryList.map((category) => {
+                    options={categoryList?.map((category) => {
                       return { key: category.id, value: category.titleEn };
                     })}
                   />

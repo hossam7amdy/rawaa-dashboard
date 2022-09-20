@@ -1,6 +1,6 @@
-const ENGLISH_RegEx = /[a-zA-Z]+$/i;
+const ENGLISH_RegEx = /[a-zA-Z0-9]+$/i;
 const MAX_FILE_SIZE = 500000; // 512KB
-const ARABIC_RegEx = /^[\u0621-\u064A\u0660-\u0669 ]+$/i;
+const ARABIC_RegEx = /^[\u0621-\u064A\u0660-\u0669-/0-9]+$/i;
 const PASSWORD = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/i;
 const USERNAME = /^(?=.{5,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/i;
 const SUPPORTED_FORMATS = Object.freeze([
@@ -80,5 +80,16 @@ export const ENGLISH_WORD = (word, len = 3) => {
 export const RANGE_NUMBER = (num, min = 0, max = 0) => {
   if (min > num || num > max) {
     return `Number must be in range [${min} - ${max}]`;
+  }
+};
+
+export const VALIDATE_FULLNAME = (name, len = 5) => {
+  const trimed_name = name.trim();
+
+  if (!trimed_name) {
+    return "Invalid Name";
+  }
+  if (trimed_name.length < 5) {
+    return `Name must be at least ${len} characters long.`;
   }
 };

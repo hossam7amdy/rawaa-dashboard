@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Text,
@@ -10,13 +11,12 @@ import {
   FormControl,
 } from "@chakra-ui/react";
 
-import { CATEGORY_URL, FILE_URL } from "../../lib/urls";
-import { useEffect, useState } from "react";
 import { GRAY_COLOR } from "../../lib/config";
 import LoadingSpinner from "../../components/UI/LoadingSpinner";
 import QuantityButton from "../../components/Input/QuantityButton";
+import { FILE_URL } from "../../lib/urls";
 import CustomButton from "../../components/UI/CustomButton";
-import useFetch from "../../hooks/use-fetch";
+import useQueryById from "../../hooks/useQueryById";
 
 const calcDiscount = (amount, discount) => {
   const discountAmount = (amount * discount) / 100;
@@ -28,20 +28,11 @@ const ProductDetails = () => {
   const navigate = useNavigate();
   const { productId } = useParams();
   const { state: product } = useLocation();
-  const [category, setCategory] = useState();
-  const { isLoading, fetchRequest: getCategoryById } = useFetch();
   const [chosenPrice, setChosedPrice] = useState(product.smallSizePrice);
-
-  useEffect(() => {
-    const getCategoryObj = (data) => {
-      setCategory(data);
-    };
-
-    getCategoryById(
-      { url: `${CATEGORY_URL}/${product.categoryId}` },
-      getCategoryObj
-    );
-  }, [getCategoryById, product]);
+  const { isLoading, data: category } = useQueryById({
+    key: "categories",
+    id: product.categoryId,
+  });
 
   const editProductHandler = () => {
     navigate(`/products/edit/${productId}`, { state: product });

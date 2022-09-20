@@ -1,26 +1,24 @@
+import axios from "axios";
+import { useState } from "react";
 import { Form, Formik } from "formik";
-import { useContext, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Box, Flex, VStack, useToast } from "@chakra-ui/react";
 
 import { ARABIC_WORD, ENGLISH_WORD, IMAGE_FILE } from "../../lib/validations";
-import { FAILED_TOAST, SUCCESS_TOAST } from "../../lib/config";
+import { FAILED_TOAST, PENDING_TOAST, SUCCESS_TOAST } from "../../lib/config";
 import { CATEGORY_URL, FILE_URL } from "../../lib/urls";
-import { CategoryContext } from "../../store/category";
 import CustomButton from "../../components/UI/CustomButton";
 import PreviewImage from "../../components/UI/PreviewImage";
 import CustomInput from "../../components/Input/CustomInput";
 import CardHeader from "../../components/UI/CardHeader";
 import InputFile from "../../components/Input/FileInput";
-import useFetch from "../../hooks/use-fetch";
 import Card from "../../components/UI/Card";
 
 const NewCategory = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const { state: prevState } = useLocation();
-  const { isLoading, error, fetchRequest: sendData } = useFetch();
-  const { addNewCategory, editCategory } = useContext(CategoryContext);
+  const [isLoading, setIsLoading] = useState(false);
   const [Imagepreview, setImagePreview] = useState(
     prevState ? `${FILE_URL}${prevState?.image}` : null
   );
@@ -30,25 +28,28 @@ const NewCategory = () => {
     for (const key in values) {
       formData.append(key, values[key]);
     }
-    const requestOptions = {
-      method: "POST",
-      body: formData,
-    };
 
-    await sendData({ url: CATEGORY_URL, requestOptions }, addNewCategory);
+    try {
+      setIsLoading(true);
 
-    if (error) {
+      const config = {
+        url: CATEGORY_URL,
+        method: "post",
+        data: formData,
+      };
+      await axios(config);
+
+      toast(SUCCESS_TOAST);
+      actions.resetForm();
+      setImagePreview(null);
+    } catch (err) {
       toast(FAILED_TOAST);
-      return;
+    } finally {
+      setIsLoading(false);
     }
-
-    toast(SUCCESS_TOAST);
-
-    actions.resetForm();
-    setImagePreview(null);
   };
 
-  // Handling Image PUT request seperatelly
+  // Image request seperatelly
   const editImageHandler = async (imageFile) => {
     if (!prevState || IMAGE_FILE(imageFile)) return;
 
@@ -56,21 +57,20 @@ const NewCategory = () => {
     formImage.append("image", imageFile);
 
     try {
-      const response = await fetch(`${CATEGORY_URL}/image/${prevState.id}`, {
-        method: "PUT",
-        body: formImage,
-      });
-
-      const data = await response.json();
-      editCategory(data);
-    } catch (err) {
-      console.error(`💥💥${err}`);
+      toast(PENDING_TOAST);
+      const config = {
+        url: `${CATEGORY_URL}/image/${prevState.id}`,
+        method: "put",
+        data: formImage,
+      };
+      await axios(config);
+      toast(SUCCESS_TOAST);
+    } catch (error) {
       toast(FAILED_TOAST);
     }
   };
 
-  const submitEditCategory = async (values) => {
-    // rest values request
+  const editCategoryHandler = async (values) => {
     const formValues = new FormData();
     for (const key in values) {
       if (key !== "image") {
@@ -78,31 +78,30 @@ const NewCategory = () => {
       }
     }
 
-    await sendData(
-      {
+    try {
+      setIsLoading(true);
+
+      const config = {
         url: `${CATEGORY_URL}/${prevState.id}`,
-        requestOptions: {
-          method: "PUT",
-          body: formValues,
-        },
-      },
-      editCategory
-    );
+        method: "put",
+        data: formValues,
+      };
+      await axios(config);
 
-    if (error) {
+      toast(SUCCESS_TOAST);
+      navigate(-1);
+    } catch (error) {
       toast(FAILED_TOAST);
-      return;
+    } finally {
+      setIsLoading(false);
     }
-
-    toast(SUCCESS_TOAST);
-    navigate(-1);
   };
 
-  const formSubmitHandler = async (values, actions) => {
+  const formSubmitHandler = (values, actions) => {
     if (!prevState) {
       submitNewCategory(values, actions);
     } else {
-      submitEditCategory(values);
+      editCategoryHandler(values);
     }
   };
 

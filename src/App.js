@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { Flex, Spacer } from "@chakra-ui/react";
 import { Routes, Route } from "react-router-dom";
 
-import { AuthContext } from "./store/auth";
+import { AuthContext } from "./context/auth";
 
 import ProductDetails from "./pages/Products/ProductDetails";
 import NewRestaurant from "./pages/Restaurants/NewRestaurant";

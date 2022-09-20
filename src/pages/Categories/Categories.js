@@ -1,4 +1,5 @@
-import { useContext, useEffect, useState } from "react";
+import axios from "axios";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Td,
@@ -12,52 +13,40 @@ import {
 
 import { FAILED_TOAST, SUCCESS_TOAST } from "../../lib/config";
 import { CATEGORY_URL, FILE_URL } from "../../lib/urls";
-import { CategoryContext } from "../../store/category";
+import useQueryData from "../../hooks/useQueryData";
 import CustomButton from "../../components/UI/CustomButton";
 import DeleteModal from "../../components/UI/DeleteModal";
 import TableBox from "../../components/table/TableBox";
-import useFetch from "../../hooks/use-fetch";
 
 const Categories = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const [categoryId, setCategoryId] = useState();
   const { onOpen, onClose, isOpen } = useDisclosure();
-  const { isLoading, error, fetchRequest } = useFetch();
-  const { categoryList, getCategoryList, deleteCategory } =
-    useContext(CategoryContext);
-
-  useEffect(() => {
-    fetchRequest({ url: `${CATEGORY_URL}/all` }, getCategoryList);
-    // eslint-disable-next-line
-  }, [fetchRequest]);
+  const {
+    isLoading,
+    isError,
+    error,
+    data: categoryList,
+    refetch,
+  } = useQueryData("categories");
 
   const editCategoryHandler = (category) => {
     navigate(`/categories/edit/${category.id}`, { state: category });
   };
 
   const deleteCategoryHandler = async () => {
-    const applyDelete = (data) => {
-      deleteCategory(data.id);
+    const config = {
+      url: `${CATEGORY_URL}/${categoryId}`,
+      method: "delete",
     };
 
-    await fetchRequest(
-      {
-        url: `${CATEGORY_URL}/${categoryId}`,
-        requestOptions: {
-          method: "DELETE",
-        },
-      },
-      applyDelete
-    );
-
-    if (error) {
-      toast(FAILED_TOAST);
-      return;
-    }
-
-    if (!error && !isLoading) {
+    try {
+      await axios(config);
+      refetch();
       toast(SUCCESS_TOAST);
+    } catch (err) {
+      toast(FAILED_TOAST);
     }
   };
 
@@ -71,8 +60,8 @@ const Categories = () => {
     </Tr>
   );
 
-  const bodyRows = categoryList.map((category) => (
-    <Tr key={category.id}>
+  const bodyRows = categoryList?.map((category, idx) => (
+    <Tr key={idx}>
       <Td>{category.id}</Td>
       <Td>
         <Image
@@ -117,12 +106,12 @@ const Categories = () => {
         onDelete={deleteCategoryHandler}
       />
       <TableBox
-        error={error}
         hasButton={true}
         bodyRows={bodyRows}
         title={"Categories"}
         isLoading={isLoading}
         headerRows={headerRows}
+        error={isError && error.message}
       />
     </>
   );

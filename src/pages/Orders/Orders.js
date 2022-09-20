@@ -1,21 +1,11 @@
-import { useEffect, useState } from "react";
 import { Td, Th, Tr, Image, HStack, Button } from "@chakra-ui/react";
 
-import { FILE_URL, ORDER_URL } from "../../lib/urls";
+import { FILE_URL } from "../../lib/urls";
+import useQueryData from "../../hooks/useQueryData";
 import TableBox from "../../components/table/TableBox";
-import useFetch from "../../hooks/use-fetch";
 
 const Orders = () => {
-  const [orders, setOrders] = useState([]);
-  const { isLoading, error, fetchRequest } = useFetch();
-
-  useEffect(() => {
-    const applyOrders = (data) => {
-      setOrders(data);
-    };
-
-    fetchRequest({ url: `${ORDER_URL}/all` }, applyOrders);
-  }, [fetchRequest]);
+  const { isLoading, error, data: orders } = useQueryData("orders");
 
   const headerRows = (
     <Tr>
@@ -25,7 +15,7 @@ const Orders = () => {
     </Tr>
   );
 
-  const bodyRows = orders.map((row) => (
+  const bodyRows = orders?.map((row) => (
     <Tr key={row.id}>
       <Td>{row.id}</Td>
       <Td>
@@ -48,10 +38,10 @@ const Orders = () => {
   return (
     <TableBox
       title={"Orders"}
-      headerRows={headerRows}
       bodyRows={bodyRows}
       isLoading={isLoading}
-      error={error}
+      error={error?.message}
+      headerRows={headerRows}
     />
   );
 };

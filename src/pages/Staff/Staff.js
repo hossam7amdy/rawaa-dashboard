@@ -1,10 +1,23 @@
-import { useEffect, useState } from "react";
-import { Td, Th, Tr, Text, useColorModeValue, HStack } from "@chakra-ui/react";
+import axios from "axios";
+import { useState } from "react";
+import {
+  Td,
+  Th,
+  Tr,
+  Text,
+  Toast,
+  HStack,
+  useDisclosure,
+  useColorModeValue,
+  useToast,
+} from "@chakra-ui/react";
 
+import { FAILED_TOAST, SUCCESS_TOAST } from "../../lib/config";
 import { STAFF_URL } from "../../lib/urls";
-import TableBox from "../../components/table/TableBox";
-import useFetch from "../../hooks/use-fetch";
 import CustomButton from "../../components/UI/CustomButton";
+import useQueryData from "../../hooks/useQueryData";
+import DeleteModal from "../../components/UI/DeleteModal";
+import TableBox from "../../components/table/TableBox";
 
 // Helper Method
 const formatDate = function (date, locale) {
@@ -22,19 +35,43 @@ const formatDate = function (date, locale) {
 };
 
 const Staff = () => {
-  const [staff, setStaff] = useState([]);
-  // const
-  const { isLoading, error, fetchRequest } = useFetch();
+  const toast = useToast();
+  const [staffId, setStafftId] = useState();
+  const { onOpen, onClose, isOpen } = useDisclosure();
   const redColor = useColorModeValue("red.200", "red.400");
   const greenColor = useColorModeValue("green.200", "green.400");
+  const { error, isLoading, data: staff, refetch } = useQueryData("staff");
 
-  useEffect(() => {
-    const applyStaff = (data) => {
-      setStaff(data);
-    };
+  const toggleStateHandler = async ({ active, ...staff }) => {
+    const newActiveState = !active;
+    const data = { active: newActiveState, ...staff };
 
-    fetchRequest({ url: `${STAFF_URL}/all` }, applyStaff);
-  }, [fetchRequest]);
+    try {
+      const config = {
+        url: `${STAFF_URL}/${staff.id}`,
+        method: "put",
+        data,
+      };
+      await axios(config);
+      toast(SUCCESS_TOAST);
+      refetch();
+    } catch (error) {
+      toast(FAILED_TOAST);
+    }
+  };
+
+  const deleteStaffHandler = async () => {
+    try {
+      const config = {
+        url: `${STAFF_URL}/${staffId}`,
+        method: "delete",
+      };
+      await axios(config);
+      refetch();
+    } catch (err) {
+      Toast(FAILED_TOAST);
+    }
+  };
 
   const headerRows = (
     <Tr>
@@ -48,7 +85,7 @@ const Staff = () => {
     </Tr>
   );
 
-  const bodyRows = staff.map((emp) => (
+  const bodyRows = staff?.map((emp) => (
     <Tr key={emp.id}>
       <Td>{emp.id}</Td>
       <Td>{emp.userName}</Td>
@@ -69,15 +106,20 @@ const Staff = () => {
         <HStack>
           <CustomButton
             size="xs"
-            name="Edit State"
+            name="Toggle State"
             variant="outline"
             colorScheme="yellow"
+            onClick={toggleStateHandler.bind(null, emp)}
           />
           <CustomButton
             size="xs"
             name="Delete"
             variant="outline"
             colorScheme="red"
+            onClick={() => {
+              onOpen();
+              setStafftId(emp.id);
+            }}
           />
         </HStack>
       </Td>
@@ -85,14 +127,22 @@ const Staff = () => {
   ));
 
   return (
-    <TableBox
-      error={error}
-      title={"Staff"}
-      hasButton={true}
-      bodyRows={bodyRows}
-      isLoading={isLoading}
-      headerRows={headerRows}
-    />
+    <>
+      <DeleteModal
+        isOpen={isOpen}
+        onClose={onClose}
+        header="Delete Staff"
+        onDelete={deleteStaffHandler}
+      />
+      <TableBox
+        title={"Staff"}
+        hasButton={true}
+        bodyRows={bodyRows}
+        isLoading={isLoading}
+        error={error?.message}
+        headerRows={headerRows}
+      />
+    </>
   );
 };
 

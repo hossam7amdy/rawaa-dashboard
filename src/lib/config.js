@@ -18,6 +18,15 @@ export const SUCCESS_TOAST = Object.freeze({
   isClosable: true,
   position: "top",
 });
+export const PENDING_TOAST = Object.freeze({
+  title: "Pending",
+  description:
+    "Request is processing in the background, will inform you once it is done.",
+  status: "info",
+  duration: 5000,
+  isClosable: true,
+  position: "top",
+});
 export const FAILED_TOAST = Object.freeze({
   title: "Failed",
   description: "Error Occurred. Try again!",

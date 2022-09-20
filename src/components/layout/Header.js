@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 
 import { getIconByName } from "../../lib/IconsFactory";
-import { AuthContext } from "../../store/auth";
+import { AuthContext } from "../../context/auth";
 
 const Header = () => {
   const { toggleColorMode } = useColorMode();

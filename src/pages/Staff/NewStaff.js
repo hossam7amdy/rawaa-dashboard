@@ -1,70 +1,52 @@
+import axios from "axios";
+import { useState } from "react";
 import { Formik, Form } from "formik";
-import { useEffect, useState } from "react";
 import { Container, useToast, VStack } from "@chakra-ui/react";
 
 import {
-  ARABIC_WORD,
-  ENGLISH_WORD,
+  VALIDATE_FULLNAME,
   VALIDATE_USERNAME,
   VALIDATE_PASSWORD,
 } from "../../lib/validations";
-import { RESTAURANT_URL, STAFF_URL } from "../../lib/urls";
-import { SUCCESS_TOAST } from "../../lib/config";
+import { FAILED_TOAST, SUCCESS_TOAST } from "../../lib/config";
 import RadioSelection from "../../components/Input/RadioSelection";
+import { STAFF_URL } from "../../lib/urls";
 import CustomButton from "../../components/UI/CustomButton";
+import useQueryData from "../../hooks/useQueryData";
 import CustomInput from "../../components/Input/CustomInput";
 import CardHeader from "../../components/UI/CardHeader";
 import Selection from "../../components/Input/Selection";
-import useFetch from "../../hooks/use-fetch";
 import Card from "../../components/UI/Card";
 
 const NewStaff = () => {
   const toast = useToast();
-  const [restaurans, setRestaurans] = useState([]);
-  const [managersList, setManagersList] = useState([]);
-  const { isLoading, error, fetchRequest } = useFetch();
+  const { data: staff } = useQueryData("staff");
+  const [isLoading, setIsLoading] = useState(false);
+  const { data: restaurants } = useQueryData("restaurants");
 
-  useEffect(() => {
-    const applyRestaurans = (data) => {
-      setRestaurans(data);
-    };
-    fetchRequest({ url: `${RESTAURANT_URL}/all` }, applyRestaurans);
-    fetchRequest({ url: `${STAFF_URL}/all` }, setManagersList);
-  }, [fetchRequest]);
+  const formSubmitHandler = async (values, action) => {
+    try {
+      setIsLoading(true);
 
-  const formSubmitHandler = async ({ active, ...values }, action) => {
-    const formData = {
-      active: active === "Active",
-      ...values,
-    };
+      const config = {
+        url: STAFF_URL,
+        method: "post",
+        data: values,
+      };
 
-    const requestOptions = {
-      method: "POST",
-      body: JSON.stringify(formData),
-      headers: { "Content-Type": "application/json" },
-    };
+      await axios(config);
 
-    await fetchRequest({ url: STAFF_URL, requestOptions });
-
-    if (error) {
-      toast({
-        title: "Failed",
-        description: error || "Error Occurred. Try again!",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
-    }
-
-    if (!isLoading && !error) {
       toast(SUCCESS_TOAST);
       action.resetForm();
+    } catch (error) {
+      toast(FAILED_TOAST);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const adminsList = managersList
-    .filter((manager) => manager.jop === "admin")
+  const managersList = staff
+    ?.filter((manager) => manager.jop === "admin")
     .map((admin) => {
       return {
         key: admin.id,
@@ -74,7 +56,6 @@ const NewStaff = () => {
 
   const initials = {
     jop: "",
-    active: "",
     fullName: "",
     userName: "",
     password: "",
@@ -94,11 +75,7 @@ const NewStaff = () => {
                 name="fullName"
                 label="Full Name"
                 placeholder="Mohamed Fawzy"
-                validate={(value) =>
-                  ARABIC_WORD(value) && ENGLISH_WORD(value)
-                    ? "Invalid Name"
-                    : ""
-                }
+                validate={VALIDATE_FULLNAME}
               />
               <CustomInput
                 type="text"
@@ -116,7 +93,7 @@ const NewStaff = () => {
               />
               <Selection
                 name="restaurantId"
-                options={restaurans.map((res) => {
+                options={restaurants?.map((res) => {
                   return { key: res.id, value: res.nameEn };
                 })}
                 label="Select a restauran"
@@ -124,7 +101,7 @@ const NewStaff = () => {
               />
               <Selection
                 name="managerId"
-                options={adminsList}
+                options={managersList}
                 label="Select a manager"
                 placeholder="select an option"
               />

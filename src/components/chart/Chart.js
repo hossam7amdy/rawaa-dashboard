@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { Text, useColorModeValue } from "@chakra-ui/react";
 import { AreaChart, XAxis, CartesianGrid, Tooltip, Area } from "recharts";
 
-import { AuthContext } from "../../store/auth";
+import { AuthContext } from "../../context/auth";
 import { GRAY_COLOR } from "../../lib/config";
 import Card from "../UI/Card";
 

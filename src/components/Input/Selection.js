@@ -18,7 +18,7 @@ const Selection = ({ options, label, ...props }) => {
         {...props}
         validate={(value) => (!value ? "Required" : undefined)}
       >
-        {options.map((option, idx) => (
+        {options?.map((option, idx) => (
           <option key={idx} value={option.key}>
             {option.value}
           </option>
