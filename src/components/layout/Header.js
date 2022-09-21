@@ -42,6 +42,7 @@ const Header = () => {
         // FIXME: justify
         <Flex w={20} gap="10px">
           <IconButton
+            aria-label="sidebar menu"
             onClick={toggleSidebar}
             icon={getIconByName("hamburgerMenu")}
           />
@@ -59,7 +60,11 @@ const Header = () => {
       {getIconByName("logo")}
 
       <Flex gap="10px">
-        <IconButton onClick={toggleColorMode} icon={darkModeIcon} />
+        <IconButton
+          aria-label="toggle colorMode"
+          onClick={toggleColorMode}
+          icon={darkModeIcon}
+        />
         {isLoggedIn && (
           <Menu>
             <MenuButton
