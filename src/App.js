@@ -4,9 +4,7 @@ import { Routes, Route } from "react-router-dom";
 
 import { AuthContext } from "./context/auth";
 
-import ProductDetails from "./pages/Products/ProductDetails";
 import NewRestaurant from "./pages/Restaurants/NewRestaurant";
-import StaffDetails from "./pages/Staff/StaffDetails";
 import Restaurants from "./pages/Restaurants/Restaurants";
 import NewCategory from "./pages/Categories/NewCategory";
 import Categories from "./pages/Categories/Categories";
@@ -14,6 +12,7 @@ import NewProduct from "./pages/Products/NewProduct";
 import NewStaff from "./pages/Staff/NewStaff";
 import NotFound from "./pages/NotFound";
 import Products from "./pages/Products/Products";
+import Details from "./pages/Details";
 import Orders from "./pages/Orders/Orders";
 import Login from "./pages/Login";
 import Staff from "./pages/Staff/Staff";
@@ -46,22 +45,32 @@ const App = () => {
                   <Route path="staff">
                     <Route index element={<Staff />} />
                     <Route path="new" element={<NewStaff />} />
-                    <Route path=":staffId" element={<StaffDetails />} />
+                    <Route path="edit/:staffId" element={<NewStaff />} />
+                    <Route path=":id" element={<Details from="staff" />} />
                   </Route>
                   <Route path="products">
                     <Route index element={<Products />} />
                     <Route path="new" element={<NewProduct />} />
-                    <Route path=":productId" element={<ProductDetails />} />
                     <Route path="edit/:productId" element={<NewProduct />} />
+                    <Route path=":id" element={<Details from="products" />} />
                   </Route>
                   <Route path="categories">
                     <Route index element={<Categories />} />
                     <Route path="new" element={<NewCategory />} />
                     <Route path="edit/:categoryId" element={<NewCategory />} />
+                    <Route path=":id" element={<Details from="categories" />} />
                   </Route>
                   <Route path="restaurants">
                     <Route index element={<Restaurants />} />
                     <Route path="new" element={<NewRestaurant />} />
+                    <Route
+                      path="edit/:restaurantId"
+                      element={<NewRestaurant />}
+                    />
+                    <Route
+                      path=":id"
+                      element={<Details from="restaurants" />}
+                    />
                   </Route>
                 </Route>
               )}
