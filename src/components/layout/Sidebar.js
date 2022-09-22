@@ -2,19 +2,19 @@ import { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import {
   Text,
-  Stack,
-  Divider,
-  Button,
-  Spacer,
   Flex,
   Link,
-  Heading,
   List,
+  Stack,
+  Spacer,
+  Divider,
+  Heading,
   ListItem,
 } from "@chakra-ui/react";
 
-import { getIconByName } from "../../lib/IconsFactory";
-import { SIDEBAR_LIST } from "../../lib/config";
+import CustomButton from "../UI/CustomButton";
+import { getIconByName } from "../../utils/IconsFactory";
+import { SIDEBAR_LIST } from "../../utils/config";
 import { AuthContext } from "../../context/auth";
 
 const Sidebar = () => {
@@ -69,9 +69,11 @@ const Sidebar = () => {
       </List>
       <Divider />
       <Spacer />
-      <Button mx={1} my={3} onClick={logout} leftIcon={getIconByName("exit")}>
-        Logout
-      </Button>
+      <CustomButton
+        name="Logout"
+        onClick={logout}
+        leftIcon={getIconByName("exit")}
+      />
     </Stack>
   );
 };

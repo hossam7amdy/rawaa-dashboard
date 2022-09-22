@@ -1,30 +1,32 @@
+import { Icon } from "@chakra-ui/react";
 import {
-  MdCategory,
   MdPeople,
+  MdCategory,
+  MdRestaurant,
+  MdShoppingBag,
   MdSpaceDashboard,
   MdOutlineExitToApp,
-  MdShoppingBag,
-  MdRestaurant,
-  MdOutlineAccountBalanceWallet,
-  MdOutlinePersonOutline,
-  MdOutlineShoppingCart,
   MdDriveFolderUpload,
+  MdOutlineShoppingCart,
+  MdOutlinePersonOutline,
+  MdOutlineAccountBalanceWallet,
 } from "react-icons/md";
-import { AiFillShop } from "react-icons/ai";
-import { CgProfile } from "react-icons/cg";
-import { HiShoppingCart, HiOutlineCurrencyDollar } from "react-icons/hi";
-import { BsPeopleFill } from "react-icons/bs";
-import { RiLockPasswordLine } from "react-icons/ri";
 import {
+  SunIcon,
+  StarIcon,
+  BellIcon,
   MoonIcon,
   Search2Icon,
   HamburgerIcon,
-  BellIcon,
+  TriangleUpIcon,
   ChevronDownIcon,
-  SunIcon,
-  StarIcon,
+  TriangleDownIcon,
 } from "@chakra-ui/icons";
-import { Icon } from "@chakra-ui/react";
+import { HiShoppingCart, HiOutlineCurrencyDollar } from "react-icons/hi";
+import { RiLockPasswordLine } from "react-icons/ri";
+import { BsPeopleFill } from "react-icons/bs";
+import { AiFillShop } from "react-icons/ai";
+import { CgProfile } from "react-icons/cg";
 
 const logo = (
   <svg xmlns="http://www.w3.org/2000/svg" width="100" viewBox="0 0 200 80">
@@ -87,6 +89,8 @@ const getIcon = (name, config) => {
     hamburgerMenu: <HamburgerIcon {...config} />,
     dropdownMenu: <ChevronDownIcon {...config} />,
     star: <StarIcon {...config} />,
+    upIcon: <TriangleUpIcon {...config} />,
+    downIcon: <TriangleDownIcon {...config} />,
   });
 
   return mapNameToIcon[name];

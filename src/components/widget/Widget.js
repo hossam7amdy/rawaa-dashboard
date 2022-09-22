@@ -1,4 +1,4 @@
-import { getIconByName } from "../../lib/IconsFactory";
+import { getIconByName } from "../../utils/IconsFactory";
 import {
   Link,
   Stat,
@@ -32,7 +32,7 @@ const Widget = (props) => {
       color: "red.900",
     });
   }
-  if (link === "orders") {
+  if (link === "order") {
     icon = getIconByName("cart", {
       ...iconConfig,
       p: 0.5,

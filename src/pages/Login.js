@@ -2,11 +2,11 @@ import { Formik, Form } from "formik";
 import { useContext, useState } from "react";
 import { VStack, Heading, InputLeftElement } from "@chakra-ui/react";
 
-import { VALIDATE_PASSWORD, VALIDATE_USERNAME } from "../lib/validations";
+import { VALIDATE_PASSWORD, VALIDATE_USERNAME } from "../utils/validations";
 import CustomInput from "../components/Input/CustomInput";
 import CustomButton from "../components/UI/CustomButton";
 import { AuthContext } from "../context/auth";
-import { getIconByName } from "../lib/IconsFactory";
+import { getIconByName } from "../utils/IconsFactory";
 
 const Login = () => {
   const { login } = useContext(AuthContext);

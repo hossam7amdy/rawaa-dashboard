@@ -18,7 +18,7 @@ import {
   InputLeftElement,
 } from "@chakra-ui/react";
 
-import { getIconByName } from "../../lib/IconsFactory";
+import { getIconByName } from "../../utils/IconsFactory";
 import { AuthContext } from "../../context/auth";
 
 const Header = () => {

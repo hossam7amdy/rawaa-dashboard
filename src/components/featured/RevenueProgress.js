@@ -13,7 +13,7 @@ import {
   CircularProgressLabel,
 } from "@chakra-ui/react";
 
-import { GRAY_COLOR } from "../../lib/config";
+import { GRAY_COLOR } from "../../utils/config";
 import Card from "../UI/Card";
 
 const RevenueProgress = () => {

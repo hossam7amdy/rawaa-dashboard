@@ -3,7 +3,7 @@ import { Text, useColorModeValue } from "@chakra-ui/react";
 import { AreaChart, XAxis, CartesianGrid, Tooltip, Area } from "recharts";
 
 import { AuthContext } from "../../context/auth";
-import { GRAY_COLOR } from "../../lib/config";
+import { GRAY_COLOR } from "../../utils/config";
 import Card from "../UI/Card";
 
 const data = [
