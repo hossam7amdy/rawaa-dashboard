@@ -1,23 +1,29 @@
-import axios from "axios";
 import { useQuery } from "react-query";
-import {
-  ORDER_URL,
-  STAFF_URL,
-  PRODUCT_URL,
-  CATEGORY_URL,
-  RESTAURANT_URL,
-} from "../lib/urls";
+import { useToast } from "@chakra-ui/react";
+
+import { PATH } from "../utils/config";
+import { request } from "../utils/axios-utils";
 
 const queryFn = Object.freeze({
-  staff: () => axios.get(`${STAFF_URL}/all`),
-  orders: () => axios.get(`${ORDER_URL}/all`),
-  products: () => axios.get(`${PRODUCT_URL}/all`),
-  categories: () => axios.get(`${CATEGORY_URL}/all`),
-  restaurants: () => axios.get(`${RESTAURANT_URL}/all`),
+  staff: () => request({ url: `${PATH.STAFF}/all` }),
+  orders: () => request({ url: `${PATH.ORDER}/all` }),
+  products: () => request({ url: `${PATH.PRODUCT}/all` }),
+  categories: () => request({ url: `${PATH.CATEGORY}/all` }),
+  restaurants: () => request({ url: `${PATH.RESTAURANT}/all` }),
 });
 
 const useCategoryData = (key) => {
+  const toast = useToast();
   return useQuery(key, queryFn[key], {
+    onError: (error) =>
+      toast({
+        title: "Failed",
+        description: `Error Occurred: ${error.message}`,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      }),
     select: (data) => {
       return data.data;
     },
