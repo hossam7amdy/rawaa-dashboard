@@ -1,49 +1,78 @@
 import {
-  Center,
-  Divider,
-  Flex,
-  Heading,
-  HStack,
-  VStack,
   Text,
+  Flex,
+  Center,
+  VStack,
+  Divider,
+  Container,
   useColorModeValue,
-  RadioGroup,
-  FormLabel,
-  FormControl,
-  Radio,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import Card from "../../components//UI/Card";
-import CustomInput from "../../components/Input/CustomInput";
+import {
+  ARABIC_TEXT,
+  ENGLISH_TEXT,
+  PHONE_NUMBER,
+} from "../../utils/validations";
+import { GRAY_COLOR, PATH } from "../../utils/config";
+import RadioSelection from "../../components/Input/RadioSelection";
+import useMutateData from "../../hooks/useMutateData";
 import CustomButton from "../../components/UI/CustomButton";
-import { GRAY_COLOR } from "../../lib/config";
+import CustomInput from "../../components/Input/CustomInput";
+import CardHeader from "../../components/UI/CardHeader";
+import Card from "../../components//UI/Card";
 
 const NewRestaurant = () => {
+  const navigate = useNavigate();
+  const { state: prevState } = useLocation();
   const color = useColorModeValue(...GRAY_COLOR);
+  const { isLoading, mutate } = useMutateData("restaurants");
+  const options = ["Open", "Closed", "Maintenance", "Soon"];
+
+  const editRestaurantHandler = (values) => {
+    const config = {
+      url: `${PATH.RESTAURANT}/${prevState.id}`,
+      method: "put",
+      data: values,
+    };
+    mutate(config, {
+      onSuccess: navigate(-2),
+    });
+  };
+
+  const formSubmitHandler = ({ state: choosenState, ...values }, actions) => {
+    console.log(actions);
+    const state = options.findIndex((item) => item === choosenState) + 1;
+    console.log(state);
+    if (prevState) {
+      editRestaurantHandler({ state, ...values });
+    } else {
+      mutate({ method: "post", data: { state, ...values } });
+    }
+    actions.resetForm();
+  };
+
   const initials = {
-    name: "", // required max 100 chars
-    nameEn: "", // required max 100 chars
-    phone: "", // max 13
-    state: 1, // 1,2,3,4
-    governorate: "", // max 50
-    city: "", // max 50
-    street: "", // max 60
+    city: prevState?.city || "",
+    phone: prevState?.phone || "",
+    state: prevState?.state || "",
+    street: prevState?.street || "",
+    nameAr: prevState?.nameAr || "",
+    nameEn: prevState?.nameEn || "",
+    governorate: prevState?.governorate || "",
   };
-
-  const formSubmitHandler = (values, action) => {
-    console.log(values);
-  };
-
   return (
-    <VStack spacing={6} mt={6} w="90%">
-      <Heading size="md">Adding new Restaurant</Heading>
-      <Card maxH="80vh" w="100%">
+    <Container maxW="90%">
+      <CardHeader
+        title={prevState ? "Edit Restaurant" : "Add new restaurant"}
+      />
+      <Card maxH="75vh" w="full">
         <Formik initialValues={initials} onSubmit={formSubmitHandler}>
           <Form>
-            <VStack spacing={4}>
-              <Flex gap={5} w="100%">
-                <VStack spacing={4} w="50%">
+            <VStack spacing={4} align="start">
+              <Flex gap={5} w="full">
+                <VStack spacing={4} w="full">
                   <Text
                     textTransform="uppercase"
                     fontWeight="bold"
@@ -52,28 +81,31 @@ const NewRestaurant = () => {
                     Contact Info
                   </Text>
                   <CustomInput
-                    name="name"
+                    name="nameAr"
                     type="text"
                     placeholder="e.g. روعـــة"
                     label="Restaurant in Arabic"
+                    validate={ARABIC_TEXT}
                   />
                   <CustomInput
                     name="nameEn"
                     type="text"
                     placeholder="e.g. Rawaa"
                     label="Restaurant in English"
+                    validate={ENGLISH_TEXT}
                   />
                   <CustomInput
                     name="phone"
                     type="tel"
                     placeholder="e.g. +02XXXXXXXXXX"
                     label="Restaurant Phone"
+                    validate={PHONE_NUMBER}
                   />
                 </VStack>
                 <Center height="200px">
                   <Divider orientation="vertical" />
                 </Center>
-                <VStack spacing={4} w="50%">
+                <VStack spacing={4} w="full">
                   <Text
                     textTransform="uppercase"
                     fontWeight="bold"
@@ -98,23 +130,22 @@ const NewRestaurant = () => {
                   />
                 </VStack>
               </Flex>
-              <FormControl>
-                <FormLabel>Resturant Current State</FormLabel>
-                <RadioGroup defaultValue={1}>
-                  <HStack spacing="24px">
-                    <Radio value={1}>Opened</Radio>
-                    <Radio value={2}>Closed</Radio>
-                    <Radio value={3}>Maintenance</Radio>
-                    <Radio value={4}>Soon</Radio>
-                  </HStack>
-                </RadioGroup>
-              </FormControl>
-              <CustomButton name="Submit" type="submit" />
+              <RadioSelection
+                name="state"
+                label="Resturant State"
+                options={options}
+              />
+              <CustomButton
+                type="submit"
+                colorScheme="teal"
+                isDisabled={isLoading}
+                name={prevState ? "Edit Restaurant" : "Add Restaurant"}
+              />
             </VStack>
           </Form>
         </Formik>
       </Card>
-    </VStack>
+    </Container>
   );
 };
 

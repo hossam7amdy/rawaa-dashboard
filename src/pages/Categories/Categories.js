@@ -1,86 +1,70 @@
-import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Td,
-  Th,
-  Tr,
-  Image,
-  HStack,
-  useToast,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { createColumnHelper } from "@tanstack/react-table";
+import { Image, HStack, useDisclosure } from "@chakra-ui/react";
 
-import { FAILED_TOAST, SUCCESS_TOAST } from "../../lib/config";
-import { CATEGORY_URL, FILE_URL } from "../../lib/urls";
-import useQueryData from "../../hooks/useQueryData";
+import useMutateData from "../../hooks/useMutateData";
 import CustomButton from "../../components/UI/CustomButton";
+import useQueryData from "../../hooks/useQueryData";
 import DeleteModal from "../../components/UI/DeleteModal";
 import TableBox from "../../components/table/TableBox";
+import { PATH } from "../../utils/config";
 
 const Categories = () => {
-  const toast = useToast();
   const navigate = useNavigate();
   const [categoryId, setCategoryId] = useState();
+  const { mutate } = useMutateData("categories");
   const { onOpen, onClose, isOpen } = useDisclosure();
-  const {
-    isLoading,
-    isError,
-    error,
-    data: categoryList,
-    refetch,
-  } = useQueryData("categories");
+  const { isLoading, data: categories } = useQueryData("categories");
 
-  const editCategoryHandler = (category) => {
-    navigate(`/categories/edit/${category.id}`, { state: category });
+  const deleteCategoryHandler = () => {
+    mutate({ url: `${PATH.CATEGORY}/${categoryId}`, method: "delete" });
   };
 
-  const deleteCategoryHandler = async () => {
-    const config = {
-      url: `${CATEGORY_URL}/${categoryId}`,
-      method: "delete",
-    };
+  const columnHelper = createColumnHelper();
+  const header = [
+    columnHelper.accessor("id", {
+      cell: (info) => info.getValue(),
+      header: "id",
+    }),
+    columnHelper.accessor("image", {
+      cell: (info) => info.getValue(),
+      header: "image",
+    }),
+    columnHelper.accessor("titleEn", {
+      cell: (info) => info.getValue(),
+      header: "title-en",
+    }),
+    columnHelper.accessor("titleAr", {
+      cell: (info) => info.getValue(),
+      header: "title-ar",
+    }),
+    columnHelper.accessor("actions", {
+      cell: (info) => info.getValue(),
+      header: "actions",
+    }),
+  ];
 
-    try {
-      await axios(config);
-      refetch();
-      toast(SUCCESS_TOAST);
-    } catch (err) {
-      toast(FAILED_TOAST);
-    }
-  };
-
-  const headerRows = (
-    <Tr>
-      <Th>id</Th>
-      <Th>image</Th>
-      <Th>title EN</Th>
-      <Th>title AR</Th>
-      <Th>action</Th>
-    </Tr>
-  );
-
-  const bodyRows = categoryList?.map((category, idx) => (
-    <Tr key={idx}>
-      <Td>{category.id}</Td>
-      <Td>
+  const data = categories?.map(({ image, ...category }) => {
+    return {
+      image: (
         <Image
-          src={FILE_URL + category.image}
-          alt={category.image}
+          src={PATH.FILE + image}
+          alt={image}
           borderRadius="md"
           boxSize="50px"
         />
-      </Td>
-      <Td>{category.titleEn}</Td>
-      <Td>{category.titleAr}</Td>
-      <Td>
+      ),
+      actions: (
         <HStack>
           <CustomButton
-            name="Edit"
+            name="View"
             size="xs"
             variant="outline"
-            colorScheme="yellow"
-            onClick={editCategoryHandler.bind(null, category)}
+            colorScheme="green"
+            onClick={() =>
+              navigate(`${category.id}`, { state: { image, ...category } })
+            }
           />
           <CustomButton
             name="Delete"
@@ -93,9 +77,10 @@ const Categories = () => {
             }}
           />
         </HStack>
-      </Td>
-    </Tr>
-  ));
+      ),
+      ...category,
+    };
+  });
 
   return (
     <>
@@ -107,11 +92,10 @@ const Categories = () => {
       />
       <TableBox
         hasButton={true}
-        bodyRows={bodyRows}
         title={"Categories"}
         isLoading={isLoading}
-        headerRows={headerRows}
-        error={isError && error.message}
+        columns={header}
+        data={data || []}
       />
     </>
   );

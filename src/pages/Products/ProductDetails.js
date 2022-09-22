@@ -11,10 +11,9 @@ import {
   FormControl,
 } from "@chakra-ui/react";
 
-import { GRAY_COLOR } from "../../lib/config";
+import { GRAY_COLOR, PATH } from "../../utils/config";
 import LoadingSpinner from "../../components/UI/LoadingSpinner";
 import QuantityButton from "../../components/Input/QuantityButton";
-import { FILE_URL } from "../../lib/urls";
 import CustomButton from "../../components/UI/CustomButton";
 import useQueryById from "../../hooks/useQueryById";
 
@@ -29,7 +28,7 @@ const ProductDetails = () => {
   const { productId } = useParams();
   const { state: product } = useLocation();
   const [chosenPrice, setChosedPrice] = useState(product.smallSizePrice);
-  const { isLoading, data: category } = useQueryById({
+  const { isLoading, data: categories } = useQueryById({
     key: "categories",
     id: product.categoryId,
   });
@@ -54,7 +53,7 @@ const ProductDetails = () => {
           textTransform="uppercase"
           color={GRAY_COLOR}
         >
-          {category?.titleEn}
+          {categories?.titleEn}
         </Text>
         <Heading marginBottom={6}>{product.titleEn}</Heading>
 
@@ -106,7 +105,7 @@ const ProductDetails = () => {
         rounded="lg"
         boxSize="sm"
         alt={product.titleEn}
-        src={FILE_URL + product.image}
+        src={PATH.FILE + product.image}
         fallbackSrc="https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"
       />
     </HStack>

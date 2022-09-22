@@ -1,18 +1,39 @@
+import { useState } from "react";
 import {
+  Tr,
+  Th,
+  Td,
+  Text,
   Table,
   Thead,
   Tbody,
+  chakra,
   TableCaption,
   TableContainer,
-  Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { LIGHT_GRAY } from "../../lib/config";
+import {
+  flexRender,
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+} from "@tanstack/react-table";
+import { LIGHT_GRAY } from "../../utils/config";
 import LoadingSpinner from "../UI/LoadingSpinner";
+import { getIconByName } from "../../utils/IconsFactory";
 
-const DataTable = ({ isLoading, error, headerRows, bodyRows }) => {
+const DataTable = ({ isLoading, data, columns }) => {
+  const [sorting, setSorting] = useState();
+  const table = useReactTable({
+    data,
+    columns,
+    state: { sorting },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
+
   let caption;
-
   if (isLoading) {
     caption = (
       <TableCaption>
@@ -22,18 +43,10 @@ const DataTable = ({ isLoading, error, headerRows, bodyRows }) => {
     );
   }
 
-  if (error) {
-    caption = (
-      <TableCaption color="crimson">
-        {error || "something went wrong!"}
-      </TableCaption>
-    );
-  }
-
-  if (!isLoading && !error) {
+  if (!isLoading) {
     caption = (
       <TableCaption>
-        {bodyRows.length === 0 ? `table is empty` : `All available items`}
+        {data.length === 0 ? `table is empty` : `All available items`}
       </TableCaption>
     );
   }
@@ -57,8 +70,51 @@ const DataTable = ({ isLoading, error, headerRows, bodyRows }) => {
     >
       <Table size="sm" border="1px">
         {caption}
-        <Thead>{headerRows}</Thead>
-        <Tbody>{bodyRows}</Tbody>
+        <Thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <Tr cursor="pointer" key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
+                const meta = header.column.columnDef.meta;
+                return (
+                  <Th
+                    key={header.id}
+                    onClick={header.column.getToggleSortingHandler()}
+                    isNumeric={meta?.isNumeric}
+                  >
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+
+                    <chakra.span pl="4">
+                      {header.column.getIsSorted()
+                        ? header.column.getIsSorted() === "desc"
+                          ? getIconByName("downIcon")
+                          : getIconByName("upIcon")
+                        : null}
+                    </chakra.span>
+                  </Th>
+                );
+              })}
+            </Tr>
+          ))}
+        </Thead>
+        <Tbody>
+          {table.getRowModel().rows.map((row) => (
+            <Tr key={row.id}>
+              {row.getVisibleCells().map((cell) => {
+                // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
+                const meta = cell.column.columnDef.meta;
+                return (
+                  <Td key={cell.id} isNumeric={meta?.isNumeric}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Td>
+                );
+              })}
+            </Tr>
+          ))}
+        </Tbody>
       </Table>
     </TableContainer>
   );

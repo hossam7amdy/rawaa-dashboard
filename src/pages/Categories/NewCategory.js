@@ -1,76 +1,51 @@
-import axios from "axios";
 import { useState } from "react";
 import { Form, Formik } from "formik";
+import { Box, Flex, VStack } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Box, Flex, VStack, useToast } from "@chakra-ui/react";
 
-import { ARABIC_WORD, ENGLISH_WORD, IMAGE_FILE } from "../../lib/validations";
-import { FAILED_TOAST, PENDING_TOAST, SUCCESS_TOAST } from "../../lib/config";
-import { CATEGORY_URL, FILE_URL } from "../../lib/urls";
+import { ARABIC_TEXT, ENGLISH_TEXT, IMAGE_FILE } from "../../utils/validations";
+import useMutateData from "../../hooks/useMutateData";
 import CustomButton from "../../components/UI/CustomButton";
 import PreviewImage from "../../components/UI/PreviewImage";
 import CustomInput from "../../components/Input/CustomInput";
 import CardHeader from "../../components/UI/CardHeader";
 import InputFile from "../../components/Input/FileInput";
+import { PATH } from "../../utils/config";
 import Card from "../../components/UI/Card";
 
 const NewCategory = () => {
-  const toast = useToast();
   const navigate = useNavigate();
   const { state: prevState } = useLocation();
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading, mutate } = useMutateData("categories");
   const [Imagepreview, setImagePreview] = useState(
-    prevState ? `${FILE_URL}${prevState?.image}` : null
+    prevState ? `${PATH.FILE}${prevState?.image}` : null
   );
 
-  const submitNewCategory = async (values, actions) => {
+  const submitNewCategory = (values) => {
     const formData = new FormData();
     for (const key in values) {
       formData.append(key, values[key]);
     }
 
-    try {
-      setIsLoading(true);
-
-      const config = {
-        url: CATEGORY_URL,
-        method: "post",
-        data: formData,
-      };
-      await axios(config);
-
-      toast(SUCCESS_TOAST);
-      actions.resetForm();
-      setImagePreview(null);
-    } catch (err) {
-      toast(FAILED_TOAST);
-    } finally {
-      setIsLoading(false);
-    }
+    mutate({ method: "post", data: formData });
   };
 
   // Image request seperatelly
-  const editImageHandler = async (imageFile) => {
+  const editImageHandler = (imageFile) => {
     if (!prevState || IMAGE_FILE(imageFile)) return;
 
     const formImage = new FormData();
     formImage.append("image", imageFile);
 
-    try {
-      toast(PENDING_TOAST);
-      const config = {
-        url: `${CATEGORY_URL}/image/${prevState.id}`,
-        method: "put",
-        data: formImage,
-      };
-      await axios(config);
-      toast(SUCCESS_TOAST);
-    } catch (error) {
-      toast(FAILED_TOAST);
-    }
+    const config = {
+      url: `${PATH.CATEGORY}/image/${prevState.id}`,
+      method: "put",
+      data: formImage,
+    };
+    mutate(config);
   };
 
-  const editCategoryHandler = async (values) => {
+  const editCategoryHandler = (values) => {
     const formValues = new FormData();
     for (const key in values) {
       if (key !== "image") {
@@ -78,31 +53,24 @@ const NewCategory = () => {
       }
     }
 
-    try {
-      setIsLoading(true);
-
-      const config = {
-        url: `${CATEGORY_URL}/${prevState.id}`,
-        method: "put",
-        data: formValues,
-      };
-      await axios(config);
-
-      toast(SUCCESS_TOAST);
-      navigate(-1);
-    } catch (error) {
-      toast(FAILED_TOAST);
-    } finally {
-      setIsLoading(false);
-    }
+    const config = {
+      url: `${PATH.CATEGORY}/${prevState.id}`,
+      method: "put",
+      data: formValues,
+    };
+    mutate(config, {
+      onSuccess: () => navigate(-1),
+    });
   };
 
   const formSubmitHandler = (values, actions) => {
     if (!prevState) {
-      submitNewCategory(values, actions);
+      submitNewCategory(values);
     } else {
       editCategoryHandler(values);
     }
+    actions.resetForm();
+    setImagePreview(null);
   };
 
   const initials = {
@@ -140,14 +108,14 @@ const NewCategory = () => {
                   <CustomInput
                     type="text"
                     name="titleAr"
-                    validate={ARABIC_WORD}
+                    validate={ARABIC_TEXT}
                     label="Category in Arabic"
                     placeholder="Enter category name in arabic"
                   />
                   <CustomInput
                     type="text"
                     name="titleEn"
-                    validate={ENGLISH_WORD}
+                    validate={ENGLISH_TEXT}
                     label="Category in English"
                     placeholder="Enter category name in english"
                   />
@@ -155,10 +123,7 @@ const NewCategory = () => {
                     type="submit"
                     colorScheme="teal"
                     isDisabled={isLoading}
-                    name={
-                      !isLoading &&
-                      (!prevState ? "Add Category" : "Edit Category")
-                    }
+                    name={!prevState ? "Add Category" : "Edit Category"}
                   />
                 </VStack>
               </Flex>

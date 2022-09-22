@@ -1,11 +1,11 @@
 import { Td, Th, Tr, Image, HStack, Button } from "@chakra-ui/react";
 
-import { FILE_URL } from "../../lib/urls";
 import useQueryData from "../../hooks/useQueryData";
 import TableBox from "../../components/table/TableBox";
+import { PATH } from "../../utils/config";
 
 const Orders = () => {
-  const { isLoading, error, data: orders } = useQueryData("orders");
+  const { isLoading, data: orders } = useQueryData("orders");
 
   const headerRows = (
     <Tr>
@@ -15,13 +15,13 @@ const Orders = () => {
     </Tr>
   );
 
-  const bodyRows = orders?.map((row) => (
-    <Tr key={row.id}>
-      <Td>{row.id}</Td>
+  const bodyRows = orders?.map((order) => (
+    <Tr key={order.id}>
+      <Td>{order.id}</Td>
       <Td>
         <Image
-          src={FILE_URL + row.image}
-          alt={row.image}
+          src={PATH.FILE + order.image}
+          alt={order.image}
           rounded="md"
           boxSize="50px"
         />
@@ -38,9 +38,8 @@ const Orders = () => {
   return (
     <TableBox
       title={"Orders"}
-      bodyRows={bodyRows}
+      bodyRows={bodyRows || []}
       isLoading={isLoading}
-      error={error?.message}
       headerRows={headerRows}
     />
   );

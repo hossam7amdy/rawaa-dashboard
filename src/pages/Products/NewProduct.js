@@ -1,17 +1,15 @@
-import axios from "axios";
 import { useState } from "react";
 import { Formik, Form } from "formik";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Box, Flex, VStack, HStack, useToast } from "@chakra-ui/react";
+import { Box, Flex, VStack, HStack } from "@chakra-ui/react";
 
 import {
-  ARABIC_WORD,
-  ENGLISH_WORD,
+  ARABIC_TEXT,
+  ENGLISH_TEXT,
   IMAGE_FILE,
   RANGE_NUMBER,
-} from "../../lib/validations";
-import { FAILED_TOAST, PENDING_TOAST, SUCCESS_TOAST } from "../../lib/config";
-import { FILE_URL, PRODUCT_URL } from "../../lib/urls";
+} from "../../utils/validations";
+import useMutateData from "../../hooks/useMutateData";
 import PreviewImage from "../../components/UI/PreviewImage";
 import useQueryData from "../../hooks/useQueryData";
 import CustomButton from "../../components/UI/CustomButton";
@@ -19,66 +17,44 @@ import CustomInput from "../../components/Input/CustomInput";
 import CardHeader from "../../components/UI/CardHeader";
 import InputFile from "../../components/Input/FileInput";
 import Selection from "../../components/Input/Selection";
+import { PATH } from "../../utils/config";
 import Card from "../../components/UI/Card";
 
 const NewProduct = () => {
-  const toast = useToast();
   const navigate = useNavigate();
   const { state: prevState } = useLocation();
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading, mutate } = useMutateData("products");
   const { data: categoryList } = useQueryData("categories");
   const [Imagepreview, setImagePreview] = useState(
-    prevState ? `${FILE_URL}${prevState?.image}` : null
+    prevState ? `${PATH.FILE}${prevState?.image}` : null
   );
 
-  const submitNewProduct = async (values, actions) => {
+  const submitNewProduct = (values) => {
     const formData = new FormData();
     for (const key in values) {
       formData.append(key, values[key]);
     }
 
-    try {
-      setIsLoading(true);
-
-      const config = {
-        url: PRODUCT_URL,
-        method: "post",
-        data: formData,
-      };
-      await axios(config);
-
-      toast(SUCCESS_TOAST);
-      actions.resetForm();
-      setImagePreview(null);
-    } catch (err) {
-      toast(FAILED_TOAST);
-    } finally {
-      setIsLoading(false);
-    }
+    mutate({ method: "post", data: formData });
   };
 
   // uploading images seperatelly
-  const editImageHandler = async (imageFile) => {
+  const editImageHandler = (imageFile) => {
     if (!prevState || IMAGE_FILE(imageFile)) return;
 
-    try {
-      toast(PENDING_TOAST);
-      const formImage = new FormData();
-      formImage.append("image", imageFile);
+    const formImage = new FormData();
+    formImage.append("image", imageFile);
 
-      const config = {
-        url: `${PRODUCT_URL}/image/${prevState.id}`,
-        method: "put",
-        data: formImage,
-      };
-      await axios(config);
-      toast(SUCCESS_TOAST);
-    } catch (err) {
-      toast(FAILED_TOAST);
-    }
+    const config = {
+      url: `${PATH.PRODUCT}/image/${prevState.id}`,
+      method: "put",
+      data: formImage,
+    };
+
+    mutate(config);
   };
 
-  const submitEditProduct = async (values) => {
+  const submitEditProduct = (values) => {
     const formValues = new FormData();
     for (const key in values) {
       if (key !== "image") {
@@ -86,32 +62,25 @@ const NewProduct = () => {
       }
     }
 
-    try {
-      setIsLoading(true);
+    const config = {
+      url: `${PATH.PRODUCT}/${prevState.id}`,
+      method: "put",
+      data: formValues,
+    };
 
-      const config = {
-        url: `${PRODUCT_URL}/${prevState.id}`,
-        method: "put",
-        data: formValues,
-      };
-
-      await axios(config);
-
-      toast(SUCCESS_TOAST);
-      navigate(-2);
-    } catch (err) {
-      toast(FAILED_TOAST);
-    } finally {
-      setIsLoading(false);
-    }
+    mutate(config, {
+      onSuccess: () => navigate(-2),
+    });
   };
 
   const formSubmitHandler = (values, actions) => {
     if (prevState) {
       submitEditProduct(values);
     } else {
-      submitNewProduct(values, actions);
+      submitNewProduct(values);
     }
+    actions.resetForm();
+    setImagePreview(null);
   };
 
   const initials = {
@@ -158,14 +127,14 @@ const NewProduct = () => {
                     name="titleAr"
                     placeholder="بيبروني"
                     label="Title in Arabic"
-                    validate={ARABIC_WORD}
+                    validate={ARABIC_TEXT}
                   />
                   <CustomInput
                     type="text"
                     name="titleEn"
                     placeholder="Pepperoni"
                     label="Title in English"
-                    validate={ENGLISH_WORD}
+                    validate={ENGLISH_TEXT}
                   />
                   <Selection
                     name="categoryId"
@@ -223,17 +192,13 @@ const NewProduct = () => {
                     type="submit"
                     colorScheme="teal"
                     isDisabled={isLoading}
-                    name={
-                      !isLoading &&
-                      (!prevState ? "Add Product" : "Edit Product")
-                    }
+                    name={!prevState ? "Add Product" : "Edit Product"}
                   />
                 </VStack>
               </Flex>
             </Form>
           )}
         </Formik>
-        {/* )} */}
       </Card>
     </Box>
   );

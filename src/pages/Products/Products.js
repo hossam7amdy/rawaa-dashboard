@@ -1,96 +1,100 @@
-import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Td,
-  Th,
-  Tr,
-  Image,
-  HStack,
-  useToast,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Image, HStack, useDisclosure } from "@chakra-ui/react";
 
-import { FILE_URL, PRODUCT_URL } from "../../lib/urls";
-import { FAILED_TOAST } from "../../lib/config";
-import CustomButton from "../../components/UI/CustomButton";
+import useMutateData from "../../hooks/useMutateData";
 import useQueryData from "../../hooks/useQueryData";
+import CustomButton from "../../components/UI/CustomButton";
 import DeleteModal from "../../components/UI/DeleteModal";
 import TableBox from "../../components/table/TableBox";
+import { PATH } from "../../utils/config";
+import { createColumnHelper } from "@tanstack/react-table";
 
 const Products = () => {
-  const toast = useToast();
   const navigate = useNavigate();
   const [productId, setProductId] = useState();
+  const { mutate } = useMutateData("products");
   const { onOpen, onClose, isOpen } = useDisclosure();
+  const { isLoading, data: products } = useQueryData("products");
 
-  const {
-    error,
-    refetch,
-    isLoading,
-    data: products,
-  } = useQueryData("products");
-
-  const viewProductHandler = (product) => {
-    navigate(`/products/${product.id}`, { state: product });
+  const deleteProductHandler = () => {
+    mutate({ url: `${PATH.PRODUCT}/${productId}`, method: "delete" });
   };
 
-  const deleteProductHandler = async () => {
-    try {
-      const config = {
-        url: `${PRODUCT_URL}/${productId}`,
-        method: "delete",
-      };
-      await axios(config);
-      refetch();
-    } catch (err) {
-      toast(FAILED_TOAST);
-    }
-  };
+  const columnHelper = createColumnHelper();
+  const header = [
+    columnHelper.accessor("id", {
+      cell: (info) => info.getValue(),
+      header: "id",
+    }),
+    columnHelper.accessor("image", {
+      cell: (info) => info.getValue(),
+      header: "image",
+    }),
+    columnHelper.accessor("title", {
+      cell: (info) => info.getValue(),
+      header: "title",
+    }),
+    columnHelper.accessor("small-price", {
+      cell: (info) => info.getValue(),
+      header: "small-price",
+    }),
+    columnHelper.accessor("medium-price", {
+      cell: (info) => info.getValue(),
+      header: "medium-price",
+    }),
+    columnHelper.accessor("large-price", {
+      cell: (info) => info.getValue(),
+      header: "large-price",
+    }),
+    columnHelper.accessor("discount", {
+      cell: (info) => info.getValue(),
+      header: "discount",
+    }),
+    columnHelper.accessor("calories", {
+      cell: (info) => info.getValue(),
+      header: "calories",
+    }),
+    columnHelper.accessor("tastes", {
+      cell: (info) => info.getValue(),
+      header: "tastes",
+    }),
+    columnHelper.accessor("actions", {
+      cell: (info) => info.getValue(),
+      header: "actions",
+    }),
+  ];
 
-  const headerRows = (
-    <Tr>
-      <Th>id</Th>
-      <Th>image</Th>
-      <Th>title</Th>
-      <Th>small price</Th>
-      <Th>medium price</Th>
-      <Th>large price</Th>
-      <Th>discount</Th>
-      <Th>calories</Th>
-      <Th>tastes</Th>
-      <Th>action</Th>
-    </Tr>
-  );
-
-  const bodyRows = products?.map((product) => (
-    <Tr key={product.id}>
-      <Td>{product.id}</Td>
-      <Td>
+  const bodyRows = products?.map((product) => {
+    return {
+      id: product.id,
+      title: product.titleEn,
+      tastes: product.tastes ? product.tastes : "-",
+      "small-price": `${product.smallSizePrice}L.E`,
+      calories: product.calories ? product.calories : "-",
+      discount: product.discountValue ? product.discountValue + "%" : "-",
+      "medium-price": `${
+        product.mediumSizePrice ? product.mediumSizePrice + "L.E" : "-"
+      }`,
+      "large-price": `${
+        product.bigSizePrice ? product.bigSizePrice + "L.E" : "-"
+      }`,
+      image: (
         <Image
           rounded="md"
           boxSize="50px"
           alt={product.image}
-          src={FILE_URL + product.image}
+          src={PATH.FILE + product.image}
         />
-      </Td>
-      <Td>{product.titleEn}</Td>
-      <Td>{product.smallSizePrice}L.E</Td>
-      <Td>{`${
-        product.mediumSizePrice ? product.mediumSizePrice + "L.E" : "-"
-      }`}</Td>
-      <Td>{`${product.bigSizePrice ? product.bigSizePrice + "L.E" : "-"}`}</Td>
-      <Td>{product.discountValue ? product.discountValue + "%" : "-"}</Td>
-      <Td>{product.calories ? product.calories : "-"}</Td>
-      <Td>{product.hasTaste}</Td>
-      <Td>
+      ),
+      actions: (
         <HStack>
           <CustomButton
             name="View"
             size="xs"
             variant="outline"
             colorScheme="green"
-            onClick={viewProductHandler.bind(null, product)}
+            onClick={() => navigate(`${product.id}`, { state: product })}
           />
           <CustomButton
             name="Delete"
@@ -103,9 +107,9 @@ const Products = () => {
             }}
           />
         </HStack>
-      </Td>
-    </Tr>
-  ));
+      ),
+    };
+  });
 
   return (
     <>
@@ -116,13 +120,11 @@ const Products = () => {
         onDelete={deleteProductHandler}
       />
       <TableBox
-        error={error?.message}
+        columns={header}
         hasButton={true}
         title={"Products"}
-        bodyRows={bodyRows}
-        products={products}
+        data={bodyRows || []}
         isLoading={isLoading}
-        headerRows={headerRows}
       />
     </>
   );

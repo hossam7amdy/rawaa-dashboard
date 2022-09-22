@@ -1,23 +1,19 @@
-import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
-  Td,
-  Th,
-  Tr,
   Text,
-  Toast,
   HStack,
   useDisclosure,
   useColorModeValue,
-  useToast,
 } from "@chakra-ui/react";
 
-import { FAILED_TOAST, SUCCESS_TOAST } from "../../lib/config";
-import { STAFF_URL } from "../../lib/urls";
+import useMutateData from "../../hooks/useMutateData";
 import CustomButton from "../../components/UI/CustomButton";
 import useQueryData from "../../hooks/useQueryData";
 import DeleteModal from "../../components/UI/DeleteModal";
 import TableBox from "../../components/table/TableBox";
+import { PATH } from "../../utils/config";
+import { createColumnHelper } from "@tanstack/react-table";
 
 // Helper Method
 const formatDate = function (date, locale) {
@@ -35,64 +31,58 @@ const formatDate = function (date, locale) {
 };
 
 const Staff = () => {
-  const toast = useToast();
+  const navigate = useNavigate();
+  const { mutate } = useMutateData("staff");
   const [staffId, setStafftId] = useState();
   const { onOpen, onClose, isOpen } = useDisclosure();
   const redColor = useColorModeValue("red.200", "red.400");
+  const { isLoading, data: staff } = useQueryData("staff");
   const greenColor = useColorModeValue("green.200", "green.400");
-  const { error, isLoading, data: staff, refetch } = useQueryData("staff");
 
-  const toggleStateHandler = async ({ active, ...staff }) => {
-    const newActiveState = !active;
-    const data = { active: newActiveState, ...staff };
-
-    try {
-      const config = {
-        url: `${STAFF_URL}/${staff.id}`,
-        method: "put",
-        data,
-      };
-      await axios(config);
-      toast(SUCCESS_TOAST);
-      refetch();
-    } catch (error) {
-      toast(FAILED_TOAST);
-    }
+  const deleteStaffHandler = () => {
+    mutate({ method: "delete", url: `${PATH.STAFF}/${staffId}` });
   };
 
-  const deleteStaffHandler = async () => {
-    try {
-      const config = {
-        url: `${STAFF_URL}/${staffId}`,
-        method: "delete",
-      };
-      await axios(config);
-      refetch();
-    } catch (err) {
-      Toast(FAILED_TOAST);
-    }
-  };
+  const columnHelper = createColumnHelper();
+  const header = [
+    columnHelper.accessor("id", {
+      cell: (info) => info.getValue(),
+      header: "id",
+    }),
+    columnHelper.accessor("username", {
+      cell: (info) => info.getValue(),
+      header: "username",
+    }),
+    columnHelper.accessor("job", {
+      cell: (info) => info.getValue(),
+      header: "job",
+    }),
+    columnHelper.accessor("branch-id", {
+      cell: (info) => info.getValue(),
+      header: "branch-id",
+    }),
+    columnHelper.accessor("joined", {
+      cell: (info) => info.getValue(),
+      header: "joined",
+    }),
+    columnHelper.accessor("status", {
+      cell: (info) => info.getValue(),
+      header: "status",
+    }),
+    columnHelper.accessor("actions", {
+      cell: (info) => info.getValue(),
+      header: "actions",
+    }),
+  ];
 
-  const headerRows = (
-    <Tr>
-      <Th>id</Th>
-      <Th>username</Th>
-      <Th>job</Th>
-      <Th>branch</Th>
-      <Th>Joined</Th>
-      <Th>status</Th>
-      <Th>action</Th>
-    </Tr>
-  );
-
-  const bodyRows = staff?.map((emp) => (
-    <Tr key={emp.id}>
-      <Td>{emp.id}</Td>
-      <Td>{emp.userName}</Td>
-      <Td>{emp.jop}</Td>
-      <Td>{emp.restaurantId}</Td>
-      <Td>{formatDate(emp.createOn)}</Td>
-      <Td>
+  const data = staff?.map((emp) => {
+    return {
+      id: emp.id,
+      username: emp.userName,
+      job: emp.jop,
+      "branch-id": emp.restaurantId,
+      joined: formatDate(emp.createOn),
+      status: (
         <Text
           rounded="xl"
           w="min-content"
@@ -101,15 +91,15 @@ const Staff = () => {
         >
           {emp.active ? "Active" : "Inactive"}
         </Text>
-      </Td>
-      <Td>
+      ),
+      actions: (
         <HStack>
           <CustomButton
             size="xs"
-            name="Toggle State"
+            name="View"
             variant="outline"
-            colorScheme="yellow"
-            onClick={toggleStateHandler.bind(null, emp)}
+            colorScheme="green"
+            onClick={() => navigate(`${emp.id}`, { state: emp })}
           />
           <CustomButton
             size="xs"
@@ -122,9 +112,9 @@ const Staff = () => {
             }}
           />
         </HStack>
-      </Td>
-    </Tr>
-  ));
+      ),
+    };
+  });
 
   return (
     <>
@@ -137,10 +127,9 @@ const Staff = () => {
       <TableBox
         title={"Staff"}
         hasButton={true}
-        bodyRows={bodyRows}
+        columns={header}
+        data={data || []}
         isLoading={isLoading}
-        error={error?.message}
-        headerRows={headerRows}
       />
     </>
   );

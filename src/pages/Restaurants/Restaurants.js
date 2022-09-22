@@ -1,61 +1,106 @@
-import { Td, Th, Tr, HStack } from "@chakra-ui/react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { HStack, useDisclosure } from "@chakra-ui/react";
+import { createColumnHelper } from "@tanstack/react-table";
 
 import RestaurantState from "../../components/restaurant/RestaurantState";
+import useMutateData from "../../hooks/useMutateData";
 import CustomButton from "../../components/UI/CustomButton";
 import useQueryData from "../../hooks/useQueryData";
+import DeleteModal from "../../components/UI/DeleteModal";
 import TableBox from "../../components/table/TableBox";
+import { PATH } from "../../utils/config";
 
 const Restaurants = () => {
-  const { isLoading, error, data: restaurants } = useQueryData("restaurants");
+  const navigate = useNavigate();
+  const { mutate } = useMutateData("restaurants");
+  const [restaurantId, setRestaurantId] = useState();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isLoading, data: restaurants } = useQueryData("restaurants");
 
-  const headerRows = (
-    <Tr>
-      <Th>id</Th>
-      <Th>name</Th>
-      <Th>city</Th>
-      <Th>state</Th>
-      <Th>phone</Th>
-      <Th>action</Th>
-    </Tr>
-  );
+  const deleteRestaurantHandler = () => {
+    const config = {
+      method: "delete",
+      url: `${PATH.RESTAURANT}/${restaurantId}`,
+    };
+    mutate(config);
+  };
 
-  const bodyRows = restaurants?.map((branch) => (
-    <Tr key={branch.id}>
-      <Td>{branch.id}</Td>
-      <Td>{branch.nameEn}</Td>
-      <Td>{branch.city}</Td>
-      <Td>
-        <RestaurantState state={branch.state} />
-      </Td>
-      <Td>{branch.phone}</Td>
-      <Td>
+  const columnHelper = createColumnHelper();
+  const header = [
+    columnHelper.accessor("id", {
+      cell: (info) => info.getValue(),
+      header: "id",
+    }),
+    columnHelper.accessor("name", {
+      cell: (info) => info.getValue(),
+      header: "name",
+    }),
+    columnHelper.accessor("city", {
+      cell: (info) => info.getValue(),
+      header: "city",
+    }),
+    columnHelper.accessor("state", {
+      cell: (info) => info.getValue(),
+      header: "state",
+    }),
+    columnHelper.accessor("phone", {
+      cell: (info) => info.getValue(),
+      header: "phone",
+    }),
+    columnHelper.accessor("actions", {
+      cell: (info) => info.getValue(),
+      header: "actions",
+    }),
+  ];
+
+  const data = restaurants?.map(({ state, nameEn, ...branch }) => {
+    return {
+      ...branch,
+      name: nameEn,
+      state: <RestaurantState state={state} />,
+      actions: (
         <HStack>
           <CustomButton
-            name="Edit"
-            variant="outline"
-            colorScheme="yellow"
             size="xs"
+            name="View"
+            variant="outline"
+            colorScheme="green"
+            onClick={() =>
+              navigate(`${branch.id}`, { state: { state, nameEn, ...branch } })
+            }
           />
           <CustomButton
+            size="xs"
             name="Delete"
             variant="outline"
             colorScheme="red"
-            size="xs"
+            onClick={() => {
+              onOpen();
+              setRestaurantId(branch.id);
+            }}
           />
         </HStack>
-      </Td>
-    </Tr>
-  ));
+      ),
+    };
+  });
 
   return (
-    <TableBox
-      hasButton={true}
-      bodyRows={bodyRows}
-      title={"Restaurants"}
-      isLoading={isLoading}
-      error={error?.message}
-      headerRows={headerRows}
-    />
+    <>
+      <DeleteModal
+        isOpen={isOpen}
+        onClose={onClose}
+        header="Delete Restaurant"
+        onDelete={deleteRestaurantHandler}
+      />
+      <TableBox
+        hasButton={true}
+        columns={header}
+        data={data || []}
+        title={"Restaurants"}
+        isLoading={isLoading}
+      />
+    </>
   );
 };
 

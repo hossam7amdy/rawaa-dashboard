@@ -1,48 +1,47 @@
-import axios from "axios";
-import { useState } from "react";
 import { Formik, Form } from "formik";
-import { Container, useToast, VStack } from "@chakra-ui/react";
+import { Container, VStack } from "@chakra-ui/react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import {
-  VALIDATE_FULLNAME,
+  VALIDATE_TEXT,
   VALIDATE_USERNAME,
   VALIDATE_PASSWORD,
-} from "../../lib/validations";
-import { FAILED_TOAST, SUCCESS_TOAST } from "../../lib/config";
+} from "../../utils/validations";
 import RadioSelection from "../../components/Input/RadioSelection";
-import { STAFF_URL } from "../../lib/urls";
+import useMutateData from "../../hooks/useMutateData";
 import CustomButton from "../../components/UI/CustomButton";
 import useQueryData from "../../hooks/useQueryData";
 import CustomInput from "../../components/Input/CustomInput";
 import CardHeader from "../../components/UI/CardHeader";
 import Selection from "../../components/Input/Selection";
+import { PATH } from "../../utils/config";
 import Card from "../../components/UI/Card";
 
 const NewStaff = () => {
-  const toast = useToast();
+  const navigate = useNavigate();
+  const { state: prevState } = useLocation();
   const { data: staff } = useQueryData("staff");
-  const [isLoading, setIsLoading] = useState(false);
-  const { data: restaurants } = useQueryData("restaurants");
+  const { isLoading, mutate } = useMutateData("staff");
+  const { data: restaurant } = useQueryData("restaurants");
 
-  const formSubmitHandler = async (values, action) => {
-    try {
-      setIsLoading(true);
+  const editStaffHandler = (values) => {
+    const config = {
+      url: `${PATH.STAFF}/${prevState.id}`,
+      method: "put",
+      data: values,
+    };
 
-      const config = {
-        url: STAFF_URL,
-        method: "post",
-        data: values,
-      };
+    mutate(config, { onSuccess: () => navigate(-2) });
+  };
 
-      await axios(config);
-
-      toast(SUCCESS_TOAST);
-      action.resetForm();
-    } catch (error) {
-      toast(FAILED_TOAST);
-    } finally {
-      setIsLoading(false);
+  const formSubmitHandler = (values, actions) => {
+    if (prevState) {
+      editStaffHandler(values);
+    } else {
+      const config = { method: "post", data: values };
+      mutate(config);
     }
+    actions.resetForm();
   };
 
   const managersList = staff
@@ -55,17 +54,17 @@ const NewStaff = () => {
     });
 
   const initials = {
-    jop: "",
-    fullName: "",
-    userName: "",
-    password: "",
-    managerId: "",
-    restaurantId: "",
+    jop: prevState?.jop || "",
+    fullName: prevState?.fullName || "",
+    userName: prevState?.userName || "",
+    password: prevState?.password || "",
+    managerId: prevState?.managerId || "",
+    restaurantId: prevState?.restaurantId || "",
   };
 
   return (
     <Container>
-      <CardHeader title="Add New Staff" />
+      <CardHeader title={prevState ? "Edit Staff" : "Add New Staff"} />
       <Card maxH="70vh">
         <Formik initialValues={initials} onSubmit={formSubmitHandler}>
           <Form>
@@ -75,7 +74,7 @@ const NewStaff = () => {
                 name="fullName"
                 label="Full Name"
                 placeholder="Mohamed Fawzy"
-                validate={VALIDATE_FULLNAME}
+                validate={VALIDATE_TEXT}
               />
               <CustomInput
                 type="text"
@@ -93,7 +92,7 @@ const NewStaff = () => {
               />
               <Selection
                 name="restaurantId"
-                options={restaurants?.map((res) => {
+                options={restaurant?.map((res) => {
                   return { key: res.id, value: res.nameEn };
                 })}
                 label="Select a restauran"
@@ -115,7 +114,7 @@ const NewStaff = () => {
                 type="submit"
                 colorScheme="teal"
                 isDisabled={isLoading}
-                name={!isLoading && "Add Staff"}
+                name={prevState ? "Edit Staff" : "Add Staff"}
               />
             </VStack>
           </Form>
