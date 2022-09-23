@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Formik, Form } from "formik";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Box, Flex, VStack, HStack } from "@chakra-ui/react";
+import { VStack, HStack, Container } from "@chakra-ui/react";
 
 import {
   ARABIC_TEXT,
@@ -10,7 +10,6 @@ import {
   RANGE_NUMBER,
 } from "../../utils/validations";
 import useMutateData from "../../hooks/useMutateData";
-import PreviewImage from "../../components/UI/PreviewImage";
 import useQueryData from "../../hooks/useQueryData";
 import CustomButton from "../../components/UI/CustomButton";
 import CustomInput from "../../components/Input/CustomInput";
@@ -23,7 +22,7 @@ import Card from "../../components/UI/Card";
 const NewProduct = () => {
   const navigate = useNavigate();
   const { state: prevState } = useLocation();
-  const { isLoading, mutate } = useMutateData("products");
+  const { mutate } = useMutateData("products");
   const { data: categoryList } = useQueryData("categories");
   const [Imagepreview, setImagePreview] = useState(
     prevState ? `${PATH.FILE}${prevState?.image}` : null
@@ -97,31 +96,30 @@ const NewProduct = () => {
   };
 
   return (
-    <Box>
+    <Container minW="container.md">
       <CardHeader title={prevState ? "Edit Product" : "Add New Product"} />
 
-      <Card maxH="70vh">
+      <Card maxH="75vh">
         <Formik initialValues={initials} onSubmit={formSubmitHandler}>
           {({ setFieldValue }) => (
             <Form>
-              <Flex gap={10}>
-                <PreviewImage image={Imagepreview} />
+              <HStack align="start" spacing={4}>
+                <InputFile
+                  name="image"
+                  label={Imagepreview}
+                  validate={IMAGE_FILE}
+                  onChange={(event) => {
+                    editImageHandler(event.target.files[0]);
+                    setFieldValue("image", event.target.files[0]);
+                    setImagePreview(
+                      event.target.files[0]
+                        ? URL.createObjectURL(event.target.files[0])
+                        : null
+                    );
+                  }}
+                />
 
-                <VStack minW="350px" spacing={4} align="start">
-                  <InputFile
-                    name="image"
-                    label="Image"
-                    validate={IMAGE_FILE}
-                    onChange={(event) => {
-                      editImageHandler(event.target.files[0]);
-                      setFieldValue("image", event.target.files[0]);
-                      setImagePreview(
-                        event.target.files[0]
-                          ? URL.createObjectURL(event.target.files[0])
-                          : null
-                      );
-                    }}
-                  />
+                <VStack align="start" spacing={4}>
                   <CustomInput
                     type="text"
                     name="titleAr"
@@ -191,16 +189,15 @@ const NewProduct = () => {
                   <CustomButton
                     type="submit"
                     colorScheme="teal"
-                    isDisabled={isLoading}
                     name={!prevState ? "Add Product" : "Edit Product"}
                   />
                 </VStack>
-              </Flex>
+              </HStack>
             </Form>
           )}
         </Formik>
       </Card>
-    </Box>
+    </Container>
   );
 };
 

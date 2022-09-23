@@ -5,24 +5,34 @@ import {
   Flex,
   Link,
   List,
-  Stack,
   Spacer,
   Divider,
   Heading,
   ListItem,
+  VStack,
+  useColorModeValue,
 } from "@chakra-ui/react";
 
-import CustomButton from "../UI/CustomButton";
+import { GRAY_COLOR, SIDEBAR_LIST } from "../../utils/config";
 import { getIconByName } from "../../utils/IconsFactory";
-import { SIDEBAR_LIST } from "../../utils/config";
 import { AuthContext } from "../../context/auth";
+import CustomButton from "../UI/CustomButton";
 
 const Sidebar = () => {
+  const color = useColorModeValue(...GRAY_COLOR);
   const { logout } = useContext(AuthContext);
 
   return (
-    <Stack w="100%" borderRight="1px" p={2} spacing={2}>
-      <Heading fontSize={12} textTransform="uppercase" color="gray.300">
+    <VStack
+      p={2}
+      as="nav"
+      w="full"
+      h="full"
+      align="start"
+      borderRight="1px"
+      maxW={{ base: 40, "2xl": 72 }}
+    >
+      <Heading size="xs" textTransform="uppercase" color={color}>
         Main
       </Heading>
       <Link
@@ -42,7 +52,7 @@ const Sidebar = () => {
         </Flex>
       </Link>
       <Divider />
-      <Heading fontSize={12} textTransform="uppercase" color="gray.300">
+      <Heading size="xs" textTransform="uppercase" color={color}>
         Lists
       </Heading>
       <List spacing={3}>
@@ -70,11 +80,13 @@ const Sidebar = () => {
       <Divider />
       <Spacer />
       <CustomButton
+        w="full"
         name="Logout"
+        alignSelf="center"
         onClick={logout}
         leftIcon={getIconByName("exit")}
       />
-    </Stack>
+    </VStack>
   );
 };
 

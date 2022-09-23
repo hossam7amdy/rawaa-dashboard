@@ -43,12 +43,8 @@ const DataTable = ({ isLoading, data, columns }) => {
     );
   }
 
-  if (!isLoading) {
-    caption = (
-      <TableCaption>
-        {data.length === 0 ? `table is empty` : `All available items`}
-      </TableCaption>
-    );
+  if (!isLoading && data.length === 0) {
+    caption = <TableCaption>"table is empty"</TableCaption>;
   }
 
   return (

@@ -21,7 +21,7 @@ const NewStaff = () => {
   const navigate = useNavigate();
   const { state: prevState } = useLocation();
   const { data: staff } = useQueryData("staff");
-  const { isLoading, mutate } = useMutateData("staff");
+  const { mutate } = useMutateData("staff");
   const { data: restaurant } = useQueryData("restaurants");
 
   const editStaffHandler = (values) => {
@@ -65,7 +65,7 @@ const NewStaff = () => {
   return (
     <Container>
       <CardHeader title={prevState ? "Edit Staff" : "Add New Staff"} />
-      <Card maxH="70vh">
+      <Card maxH="75vh">
         <Formik initialValues={initials} onSubmit={formSubmitHandler}>
           <Form>
             <VStack align="start" spacing={4}>
@@ -113,7 +113,6 @@ const NewStaff = () => {
               <CustomButton
                 type="submit"
                 colorScheme="teal"
-                isDisabled={isLoading}
                 name={prevState ? "Edit Staff" : "Add Staff"}
               />
             </VStack>

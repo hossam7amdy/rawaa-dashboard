@@ -4,7 +4,7 @@ const PreviewImage = ({ image, ...props }) => {
   return (
     <Image
       fallbackSrc="https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"
-      rounded="full"
+      rounded="lg"
       boxSize="100px"
       justifyContent="center"
       src={image}

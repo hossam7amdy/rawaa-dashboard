@@ -29,7 +29,7 @@ import { AiFillShop } from "react-icons/ai";
 import { CgProfile } from "react-icons/cg";
 
 const logo = (
-  <svg xmlns="http://www.w3.org/2000/svg" width="100" viewBox="0 0 200 80">
+  <svg xmlns="http://www.w3.org/2000/svg" width="100" viewBox="0 0 180 80">
     <g
       id="Group_7"
       data-name="Group 7"

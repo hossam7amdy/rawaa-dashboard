@@ -27,7 +27,7 @@ const NewRestaurant = () => {
   const navigate = useNavigate();
   const { state: prevState } = useLocation();
   const color = useColorModeValue(...GRAY_COLOR);
-  const { isLoading, mutate } = useMutateData("restaurants");
+  const { mutate } = useMutateData("restaurants");
   const options = ["Open", "Closed", "Maintenance", "Soon"];
 
   const editRestaurantHandler = (values) => {
@@ -63,11 +63,11 @@ const NewRestaurant = () => {
     governorate: prevState?.governorate || "",
   };
   return (
-    <Container maxW="90%">
+    <Container minW="container.lg">
       <CardHeader
         title={prevState ? "Edit Restaurant" : "Add new restaurant"}
       />
-      <Card maxH="75vh" w="full">
+      <Card maxH="75vh">
         <Formik initialValues={initials} onSubmit={formSubmitHandler}>
           <Form>
             <VStack spacing={4} align="start">
@@ -138,7 +138,6 @@ const NewRestaurant = () => {
               <CustomButton
                 type="submit"
                 colorScheme="teal"
-                isDisabled={isLoading}
                 name={prevState ? "Edit Restaurant" : "Add Restaurant"}
               />
             </VStack>

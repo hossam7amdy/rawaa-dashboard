@@ -6,7 +6,7 @@ const CardHeader = ({ title }) => {
   const color = useColorModeValue(...GRAY_COLOR);
 
   return (
-    <Card my={5}>
+    <Card my={2}>
       <Heading size="sm" textTransform="uppercase" color={color}>
         {title}
       </Heading>

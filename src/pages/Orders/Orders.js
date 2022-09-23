@@ -1,46 +1,59 @@
-import { Td, Th, Tr, Image, HStack, Button } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+import { createColumnHelper } from "@tanstack/react-table";
 
+import CustomButton from "../../components/UI/CustomButton";
 import useQueryData from "../../hooks/useQueryData";
 import TableBox from "../../components/table/TableBox";
-import { PATH } from "../../utils/config";
 
 const Orders = () => {
+  const navigate = useNavigate();
   const { isLoading, data: orders } = useQueryData("orders");
 
-  const headerRows = (
-    <Tr>
-      <Th>id</Th>
-      <Th>image</Th>
-      <Th>action</Th>
-    </Tr>
-  );
+  const columnHelper = createColumnHelper();
+  const header = [
+    columnHelper.accessor("id", {
+      cell: (info) => info.getValue(),
+      header: "id",
+    }),
+    columnHelper.accessor("number", {
+      cell: (info) => info.getValue(),
+      header: "number",
+    }),
+    columnHelper.accessor("customerId", {
+      cell: (info) => info.getValue(),
+      header: "customerId",
+    }),
+    columnHelper.accessor("status", {
+      cell: (info) => info.getValue(),
+      header: "status",
+    }),
+    columnHelper.accessor("actions", {
+      cell: (info) => info.getValue(),
+      header: "actions",
+    }),
+  ];
 
-  const bodyRows = orders?.map((order) => (
-    <Tr key={order.id}>
-      <Td>{order.id}</Td>
-      <Td>
-        <Image
-          src={PATH.FILE + order.image}
-          alt={order.image}
-          rounded="md"
-          boxSize="50px"
+  const data = orders?.map((order) => {
+    return {
+      ...order,
+      actions: (
+        <CustomButton
+          size="xs"
+          name="View"
+          variant="outline"
+          colorScheme="green"
+          onClick={() => navigate(`${order.id}`, { state: order })}
         />
-      </Td>
-      <Td>
-        <HStack>
-          <Button size="xs">Edit</Button>
-          <Button size="xs">Delete</Button>
-        </HStack>
-      </Td>
-    </Tr>
-  ));
+      ),
+    };
+  });
 
   return (
     <TableBox
-      title={"Orders"}
-      bodyRows={bodyRows || []}
+      columns={header}
+      title={"orders"}
+      data={data || []}
       isLoading={isLoading}
-      headerRows={headerRows}
     />
   );
 };

@@ -1,13 +1,13 @@
 import { NavLink } from "react-router-dom";
-import { Box, Flex, Heading } from "@chakra-ui/react";
+import { Box, Heading, HStack } from "@chakra-ui/react";
 
 import DataTable from "./DataTable";
 import CustomButton from "../UI/CustomButton";
 
 const TableBox = ({ title, hasButton, ...props }) => {
   return (
-    <Box h="80vh" w="100%" m={3}>
-      <Flex justify="space-between" align="center" p={2}>
+    <Box w="full">
+      <HStack justify="space-between" mb={3}>
         <Heading size="lg" color="gray.400">
           {title}
         </Heading>
@@ -17,7 +17,7 @@ const TableBox = ({ title, hasButton, ...props }) => {
             <CustomButton name="Add New" colorScheme="teal" />
           </NavLink>
         )}
-      </Flex>
+      </HStack>
 
       <DataTable {...props} />
     </Box>

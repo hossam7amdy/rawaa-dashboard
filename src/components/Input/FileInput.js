@@ -1,27 +1,20 @@
 import {
-  Text,
-  Flex,
   Input,
   FormLabel,
   FormControl,
   FormHelperText,
 } from "@chakra-ui/react";
 import { Field, useField } from "formik";
-import { getIconByName } from "../../utils/IconsFactory";
+import PreviewImage from "../UI/PreviewImage";
 
 const InputFile = ({ label, ...props }) => {
   const [field, meta] = useField(props);
   const { value, ...rest } = field;
 
   return (
-    <FormControl>
-      <FormLabel cursor="pointer" maxW="min-content">
-        {
-          <Flex gap={2}>
-            <Text>{label || props.name}</Text>
-            {getIconByName("image", { h: 6, w: 6 })}
-          </Flex>
-        }
+    <FormControl maxW="max-content">
+      <FormLabel cursor="pointer">
+        <PreviewImage image={label} />
       </FormLabel>
       <Input
         as={Field}

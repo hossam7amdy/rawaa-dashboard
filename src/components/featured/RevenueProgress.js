@@ -16,13 +16,13 @@ import {
 import { GRAY_COLOR } from "../../utils/config";
 import Card from "../UI/Card";
 
-const RevenueProgress = () => {
+const RevenueProgress = (props) => {
   const color = useColorModeValue(...GRAY_COLOR);
   const greenColor = useColorModeValue("green.200", "green.500");
   const redColor = useColorModeValue("red.200", "red.700");
 
   return (
-    <Card w="35%" h="100%">
+    <Card {...props}>
       <Text fontSize="larger" fontWeight="semibold" color={color}>
         Total Revenue
       </Text>
@@ -35,7 +35,7 @@ const RevenueProgress = () => {
         <Text fontSize="xs" color={color}>
           Previous transactions processing. Last payments may not be included.
         </Text>
-        <HStack w="100%">
+        <HStack w="xs">
           <Stat>
             <StatLabel color={color}>Target</StatLabel>
             <Flex align="start" gap={1}>

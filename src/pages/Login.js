@@ -1,6 +1,6 @@
 import { Formik, Form } from "formik";
 import { useContext, useState } from "react";
-import { VStack, Heading, InputLeftElement } from "@chakra-ui/react";
+import { VStack, Heading, InputLeftElement, Container } from "@chakra-ui/react";
 
 import { VALIDATE_PASSWORD, VALIDATE_USERNAME } from "../utils/validations";
 import CustomInput from "../components/Input/CustomInput";
@@ -21,14 +21,14 @@ const Login = () => {
   };
 
   return (
-    <VStack h="75vh" justifyContent="center" spacing={4}>
-      <Heading>Login</Heading>
+    <Container my={28}>
+      <Heading textAlign="center">Login</Heading>
       <Formik
         initialValues={{ username: "", password: "" }}
         onSubmit={formSubmitHandler}
       >
         <Form>
-          <VStack w="md">
+          <VStack spacing={4}>
             <CustomInput
               type="text"
               name="username"
@@ -58,7 +58,7 @@ const Login = () => {
           </VStack>
         </Form>
       </Formik>
-    </VStack>
+    </Container>
   );
 };
 

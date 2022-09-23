@@ -6,7 +6,10 @@ import { request } from "../utils/axios-utils";
 
 const queryFn = Object.freeze({
   staff: () => request({ url: `${PATH.STAFF}/all` }),
-  orders: () => request({ url: `${PATH.ORDER}/all` }),
+  orders: ({ state, page, size }) =>
+    request({
+      url: `${PATH.ORDER}/all`,
+    }),
   products: () => request({ url: `${PATH.PRODUCT}/all` }),
   categories: () => request({ url: `${PATH.CATEGORY}/all` }),
   restaurants: () => request({ url: `${PATH.RESTAURANT}/all` }),

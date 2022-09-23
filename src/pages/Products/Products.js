@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { createColumnHelper } from "@tanstack/react-table";
 import { Image, HStack, useDisclosure } from "@chakra-ui/react";
 
 import useMutateData from "../../hooks/useMutateData";
@@ -8,7 +9,6 @@ import CustomButton from "../../components/UI/CustomButton";
 import DeleteModal from "../../components/UI/DeleteModal";
 import TableBox from "../../components/table/TableBox";
 import { PATH } from "../../utils/config";
-import { createColumnHelper } from "@tanstack/react-table";
 
 const Products = () => {
   const navigate = useNavigate();
