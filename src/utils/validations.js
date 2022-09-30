@@ -1,6 +1,6 @@
 const PHONE = /[0-9]+$/i;
 const ENGLISH_RegEx = /[a-zA-Z0-9]+$/i;
-const MAX_FILE_SIZE = 500000; // 512KB
+const MAX_FILE_SIZE = 100000; // 128KB
 const ARABIC_RegEx = /^[\u0621-\u064A\u0660-\u0669-/0-9 ]+$/i;
 const PASSWORD = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/i;
 const USERNAME = /^(?=.{5,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/i;

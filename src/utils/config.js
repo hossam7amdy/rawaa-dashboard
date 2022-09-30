@@ -1,4 +1,3 @@
-export const TIMEOUT_SEC = 30;
 export const LIGHT_GRAY = Object.freeze(["gray.100", "gray.700"]);
 export const GRAY_COLOR = Object.freeze(["gray.400", "gray.500"]);
 
@@ -7,9 +6,10 @@ export const PATH = Object.freeze({
   STAFF: "/en/api/cp/staff",
   ORDER: "/en/api/cp/order",
   PRODUCT: "/en/api/cp/product",
-  CUSTOMER: "/en/api/cp/customers",
   CATEGORY: "/en/api/cp/category",
   RESTAURANT: "/en/api/cp/restaurant",
+  STATS: "/ar/api/cp/Order/totalPrice",
+  ADDRESS: "api/client/DeliveryAddress",
   FILE: "http://www.rawaa.somee.com/api/file/",
 });
 
@@ -22,20 +22,22 @@ export const SIDEBAR_LIST = Object.freeze([
   "Restaurants",
 ]);
 
-// toasts
-export const SUCCESS_TOAST = Object.freeze({
-  title: "Success",
-  description: "Request completed successfully.",
-  status: "success",
-  duration: 5000,
-  isClosable: true,
-  position: "top",
-});
-export const PENDING_TOAST = Object.freeze({
-  title: "Pending",
-  description: "Request is processing in the background, will inform you soon.",
-  status: "info",
-  duration: 5000,
-  isClosable: true,
-  position: "top",
-});
+// helpers
+export const CURRENCY_FORMATER = (amount) => {
+  return new Intl.NumberFormat("en-EG", {
+    style: "currency",
+    currency: "EGP",
+  }).format(amount);
+};
+
+export const DATE_FORMATER = (date) => {
+  const options = {
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  };
+
+  const dateFormat = new Date(date);
+  return new Intl.DateTimeFormat("en-EG", options).format(dateFormat);
+};

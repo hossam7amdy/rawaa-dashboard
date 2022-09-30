@@ -3,33 +3,32 @@ import {
   MdPeople,
   MdCategory,
   MdRestaurant,
-  MdShoppingBag,
   MdSpaceDashboard,
   MdOutlineExitToApp,
-  MdDriveFolderUpload,
   MdOutlineShoppingCart,
   MdOutlinePersonOutline,
   MdOutlineAccountBalanceWallet,
 } from "react-icons/md";
+
 import {
   SunIcon,
-  StarIcon,
-  BellIcon,
   MoonIcon,
-  Search2Icon,
   HamburgerIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
   TriangleUpIcon,
   ChevronDownIcon,
   TriangleDownIcon,
+  EditIcon,
+  CheckIcon,
+  CloseIcon,
 } from "@chakra-ui/icons";
 import { HiShoppingCart, HiOutlineCurrencyDollar } from "react-icons/hi";
 import { RiLockPasswordLine } from "react-icons/ri";
-import { BsPeopleFill } from "react-icons/bs";
 import { AiFillShop } from "react-icons/ai";
-import { CgProfile } from "react-icons/cg";
 
-const logo = (
-  <svg xmlns="http://www.w3.org/2000/svg" width="100" viewBox="0 0 180 80">
+const Logo = (props) => (
+  <Icon width="200" viewBox="0 0 180 80" {...props} fill="currentColor">
     <g
       id="Group_7"
       data-name="Group 7"
@@ -60,37 +59,35 @@ const logo = (
         d="M495.708,728.351a11.37,11.37,0,0,1-3.416,8.275,11.142,11.142,0,0,1-8.23,3.462,11.74,11.74,0,0,1-11.736-11.737l.183-.092a6.135,6.135,0,0,0,1.582,4.241,5.1,5.1,0,0,0,3.966,1.765,5.542,5.542,0,0,0,4.126-1.743,5.884,5.884,0,0,0,1.7-4.263V701.9q0-4.767-1.031-6.281a3.5,3.5,0,0,0-3.1-1.512h-.619a5.112,5.112,0,0,0-.986.183q.963-.366,1.972-.779a24.879,24.879,0,0,1,6.739-1.009,10.672,10.672,0,0,1,6.052,1.467q2.8,1.881,2.8,6.143Z"
       />
     </g>
-  </svg>
+  </Icon>
 );
 
 const getIcon = (name, config) => {
   const mapNameToIcon = Object.freeze({
-    logo,
-    staff: <Icon {...config} as={MdPeople} />,
-    restaurants: <Icon {...config} as={MdRestaurant} />,
-    shoppingBag: <Icon {...config} as={MdShoppingBag} />,
-    exit: <Icon {...config} as={MdOutlineExitToApp} />,
-    dashboard: <Icon {...config} as={MdSpaceDashboard} />,
-    profile: <Icon {...config} as={CgProfile} />,
-    customers: <Icon {...config} as={BsPeopleFill} />,
-    orders: <Icon {...config} as={HiShoppingCart} />,
-    products: <Icon {...config} as={AiFillShop} />,
-    categories: <Icon {...config} as={MdCategory} />,
-    wallet: <Icon {...config} as={MdOutlineAccountBalanceWallet} />,
-    dollar: <Icon {...config} as={HiOutlineCurrencyDollar} />,
-    person: <Icon {...config} as={MdOutlinePersonOutline} />,
-    cart: <Icon {...config} as={MdOutlineShoppingCart} />,
-    password: <Icon {...config} as={RiLockPasswordLine} />,
-    image: <Icon {...config} as={MdDriveFolderUpload} />,
-    notification: <BellIcon {...config} />,
-    moon: <MoonIcon {...config} />,
+    logo: <Logo {...config} />,
     sun: <SunIcon {...config} />,
-    search: <Search2Icon {...config} />,
+    edit: <EditIcon {...config} />,
+    moon: <MoonIcon {...config} />,
+    check: <CheckIcon {...config} />,
+    close: <CloseIcon {...config} />,
+    upIcon: <TriangleUpIcon {...config} />,
+    arrowLeft: <ArrowLeftIcon {...config} />,
+    arrowRight: <ArrowRightIcon {...config} />,
+    downIcon: <TriangleDownIcon {...config} />,
     hamburgerMenu: <HamburgerIcon {...config} />,
     dropdownMenu: <ChevronDownIcon {...config} />,
-    star: <StarIcon {...config} />,
-    upIcon: <TriangleUpIcon {...config} />,
-    downIcon: <TriangleDownIcon {...config} />,
+    staff: <Icon {...config} as={MdPeople} />,
+    products: <Icon {...config} as={AiFillShop} />,
+    orders: <Icon {...config} as={HiShoppingCart} />,
+    categories: <Icon {...config} as={MdCategory} />,
+    exit: <Icon {...config} as={MdOutlineExitToApp} />,
+    restaurants: <Icon {...config} as={MdRestaurant} />,
+    cart: <Icon {...config} as={MdOutlineShoppingCart} />,
+    dashboard: <Icon {...config} as={MdSpaceDashboard} />,
+    password: <Icon {...config} as={RiLockPasswordLine} />,
+    person: <Icon {...config} as={MdOutlinePersonOutline} />,
+    dollar: <Icon {...config} as={HiOutlineCurrencyDollar} />,
+    wallet: <Icon {...config} as={MdOutlineAccountBalanceWallet} />,
   });
 
   return mapNameToIcon[name];
