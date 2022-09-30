@@ -6,10 +6,10 @@ import {
   Link,
   List,
   Spacer,
-  Divider,
-  Heading,
-  ListItem,
   VStack,
+  Heading,
+  Divider,
+  ListItem,
   useColorModeValue,
 } from "@chakra-ui/react";
 
@@ -19,19 +19,14 @@ import { AuthContext } from "../../context/auth";
 import CustomButton from "../UI/CustomButton";
 
 const Sidebar = () => {
+  const { logout, token } = useContext(AuthContext);
   const color = useColorModeValue(...GRAY_COLOR);
-  const { logout } = useContext(AuthContext);
+
+  const sidebarList =
+    token.userName === "admin" ? SIDEBAR_LIST : [SIDEBAR_LIST[0]];
 
   return (
-    <VStack
-      p={2}
-      as="nav"
-      w="full"
-      h="full"
-      align="start"
-      borderRight="1px"
-      maxW={{ base: 40, "2xl": 72 }}
-    >
+    <VStack p={2} as="nav" w="200px" align="start" borderRight="1px">
       <Heading size="xs" textTransform="uppercase" color={color}>
         Main
       </Heading>
@@ -56,7 +51,7 @@ const Sidebar = () => {
         Lists
       </Heading>
       <List spacing={3}>
-        {SIDEBAR_LIST.map((link, idx) => (
+        {sidebarList.map((link, idx) => (
           <ListItem key={idx}>
             <Link
               as={(props) => (

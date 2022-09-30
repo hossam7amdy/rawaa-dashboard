@@ -2,7 +2,7 @@ import { useToast } from "@chakra-ui/react";
 import { useMutation, useQueryClient } from "react-query";
 
 import { request } from "../utils/axios-utils";
-import { PATH, PENDING_TOAST, SUCCESS_TOAST } from "../utils/config";
+import { PATH } from "../utils/config";
 
 const queryFn = Object.freeze({
   staff: (options) => request({ url: PATH.STAFF, ...options }),
@@ -19,7 +19,15 @@ const useMutateData = (key) => {
   const updateCache = async ({ method, data: newData }) => {
     if (method === "delete") return;
     if (key === "products" || key === "categories") {
-      toast(PENDING_TOAST);
+      toast({
+        title: "Pending",
+        description:
+          "Request is processing in the background, will inform you soon.",
+        status: "info",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
     }
   };
 
@@ -45,7 +53,15 @@ const useMutateData = (key) => {
     onError: rollback,
     // 3. Always refetch after error or success:
     onSettled: () => queryClient.invalidateQueries(key),
-    onSuccess: () => toast(SUCCESS_TOAST),
+    onSuccess: () =>
+      toast({
+        title: "Success",
+        description: "Request completed successfully.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      }),
   });
 };
 

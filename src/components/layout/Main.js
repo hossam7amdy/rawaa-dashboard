@@ -9,7 +9,7 @@ const Main = () => {
   const { isSidebarOpen } = useContext(AuthContext);
 
   return (
-    <Flex w="full" h="full" as="main" overflow="hidden">
+    <Flex as="main" flexGrow={1} w="100vw">
       {isSidebarOpen && <Sidebar />}
       <Content />
     </Flex>

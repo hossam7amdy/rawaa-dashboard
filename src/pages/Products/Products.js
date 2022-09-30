@@ -83,7 +83,7 @@ const Products = () => {
         <Image
           rounded="md"
           boxSize="50px"
-          alt={product.image}
+          alt={product.titleEn}
           src={PATH.FILE + product.image}
         />
       ),

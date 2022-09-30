@@ -31,6 +31,7 @@ const Details = ({ from }) => {
   let content = [];
 
   for (const key in state) {
+    if (key === "password") continue;
     if (key === "image") {
       image = (
         <PreviewImage
@@ -45,7 +46,7 @@ const Details = ({ from }) => {
       <ListItem key={key}>
         <Flex gap={2}>
           <Text as="b">{key}: </Text>
-          <Text as="kbd">{state[key]}</Text>
+          <Text as="kbd">{String(state[key])}</Text>
         </Flex>
       </ListItem>
     );
@@ -60,7 +61,7 @@ const Details = ({ from }) => {
   }
 
   return (
-    <Container>
+    <Container minW="container.md">
       <CardHeader title={`${from} Details`} />
       <Card>
         <Flex justify="space-between">
@@ -73,6 +74,7 @@ const Details = ({ from }) => {
           name="Edit"
           variant="outline"
           colorScheme="yellow"
+          isDisabled={state.userName === "admin"}
           onClick={() => navigate(`/${from}/edit/${id}`, { state })}
         />
       </Card>

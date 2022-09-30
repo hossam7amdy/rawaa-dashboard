@@ -22,7 +22,7 @@ import Card from "../../components/UI/Card";
 const NewProduct = () => {
   const navigate = useNavigate();
   const { state: prevState } = useLocation();
-  const { mutate } = useMutateData("products");
+  const { isLoading, mutate } = useMutateData("products");
   const { data: categoryList } = useQueryData("categories");
   const [Imagepreview, setImagePreview] = useState(
     prevState ? `${PATH.FILE}${prevState?.image}` : null
@@ -189,6 +189,8 @@ const NewProduct = () => {
                   <CustomButton
                     type="submit"
                     colorScheme="teal"
+                    isLoading={isLoading}
+                    loadingText="Submitting"
                     name={!prevState ? "Add Product" : "Edit Product"}
                   />
                 </VStack>

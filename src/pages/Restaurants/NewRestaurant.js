@@ -27,7 +27,7 @@ const NewRestaurant = () => {
   const navigate = useNavigate();
   const { state: prevState } = useLocation();
   const color = useColorModeValue(...GRAY_COLOR);
-  const { mutate } = useMutateData("restaurants");
+  const { isLoading, mutate } = useMutateData("restaurants");
   const options = ["Open", "Closed", "Maintenance", "Soon"];
 
   const editRestaurantHandler = (values) => {
@@ -42,9 +42,7 @@ const NewRestaurant = () => {
   };
 
   const formSubmitHandler = ({ state: choosenState, ...values }, actions) => {
-    console.log(actions);
     const state = options.findIndex((item) => item === choosenState) + 1;
-    console.log(state);
     if (prevState) {
       editRestaurantHandler({ state, ...values });
     } else {
@@ -138,6 +136,8 @@ const NewRestaurant = () => {
               <CustomButton
                 type="submit"
                 colorScheme="teal"
+                isLoading={isLoading}
+                loadingText="Submitting"
                 name={prevState ? "Edit Restaurant" : "Add Restaurant"}
               />
             </VStack>

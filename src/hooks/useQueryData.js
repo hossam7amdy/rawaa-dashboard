@@ -5,17 +5,15 @@ import { PATH } from "../utils/config";
 import { request } from "../utils/axios-utils";
 
 const queryFn = Object.freeze({
+  stats: () => request({ url: PATH.STATS }),
   staff: () => request({ url: `${PATH.STAFF}/all` }),
-  orders: ({ state, page, size }) =>
-    request({
-      url: `${PATH.ORDER}/all`,
-    }),
+  orders: () => request({ url: `${PATH.ORDER}/all` }),
   products: () => request({ url: `${PATH.PRODUCT}/all` }),
   categories: () => request({ url: `${PATH.CATEGORY}/all` }),
   restaurants: () => request({ url: `${PATH.RESTAURANT}/all` }),
 });
 
-const useCategoryData = (key) => {
+const useQueryData = (key) => {
   const toast = useToast();
   return useQuery(key, queryFn[key], {
     onError: (error) =>
@@ -33,4 +31,4 @@ const useCategoryData = (key) => {
   });
 };
 
-export default useCategoryData;
+export default useQueryData;

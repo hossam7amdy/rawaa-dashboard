@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import { Formik, Form } from "formik";
 import { Container, VStack } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -7,6 +8,7 @@ import {
   VALIDATE_USERNAME,
   VALIDATE_PASSWORD,
 } from "../../utils/validations";
+import { AuthContext } from "../../context/auth";
 import RadioSelection from "../../components/Input/RadioSelection";
 import useMutateData from "../../hooks/useMutateData";
 import CustomButton from "../../components/UI/CustomButton";
@@ -19,10 +21,14 @@ import Card from "../../components/UI/Card";
 
 const NewStaff = () => {
   const navigate = useNavigate();
+  const { token } = useContext(AuthContext);
+  const { isLoading, mutate } = useMutateData("staff");
   const { state: prevState } = useLocation();
   const { data: staff } = useQueryData("staff");
-  const { mutate } = useMutateData("staff");
   const { data: restaurant } = useQueryData("restaurants");
+
+  const isEditing = !!prevState;
+  const isAuthorized = token.userName === "admin";
 
   const editStaffHandler = (values) => {
     const config = {
@@ -80,6 +86,7 @@ const NewStaff = () => {
                 type="text"
                 name="userName"
                 label="username"
+                isDisabled={isEditing}
                 validate={VALIDATE_USERNAME}
                 placeholder="Enter username"
               />
@@ -90,29 +97,35 @@ const NewStaff = () => {
                 validate={VALIDATE_PASSWORD}
                 placeholder="Enter password"
               />
-              <Selection
-                name="restaurantId"
-                options={restaurant?.map((res) => {
-                  return { key: res.id, value: res.nameEn };
-                })}
-                label="Select a restauran"
-                placeholder="select an option"
-              />
-              <Selection
-                name="managerId"
-                options={managersList}
-                label="Select a manager"
-                placeholder="select an option"
-              />
-              <RadioSelection
-                name="jop"
-                label="Role"
-                options={["admin", "cashier"]}
-                validate={(value) => (!value ? "Required" : "")}
-              />
+              {isAuthorized && (
+                <>
+                  <Selection
+                    name="restaurantId"
+                    options={restaurant?.map((res) => {
+                      return { key: res.id, value: res.nameEn };
+                    })}
+                    label="Select a restauran"
+                    placeholder="select an option"
+                  />
+                  <Selection
+                    name="managerId"
+                    options={managersList}
+                    label="Select a manager"
+                    placeholder="select an option"
+                  />
+                  <RadioSelection
+                    name="jop"
+                    label="Role"
+                    options={["admin", "cashier"]}
+                    validate={(value) => (!value ? "Required" : "")}
+                  />
+                </>
+              )}
               <CustomButton
                 type="submit"
                 colorScheme="teal"
+                isLoading={isLoading}
+                loadingText="Submitting"
                 name={prevState ? "Edit Staff" : "Add Staff"}
               />
             </VStack>

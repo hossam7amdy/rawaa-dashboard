@@ -1,12 +1,11 @@
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   Flex,
   Menu,
-  Button,
-  HStack,
   Avatar,
+  Button,
   MenuList,
   MenuItem,
   IconButton,
@@ -19,9 +18,10 @@ import { getIconByName } from "../../utils/IconsFactory";
 import { AuthContext } from "../../context/auth";
 
 const Header = () => {
-  const { toggleColorMode } = useColorMode();
+  const navigate = useNavigate();
   const { colorMode } = useColorMode();
-  const { isLoggedIn, toggleSidebar, logout } = useContext(AuthContext);
+  const { toggleColorMode } = useColorMode();
+  const { isLoggedIn, toggleSidebar, logout, token } = useContext(AuthContext);
 
   const iconName = colorMode === "light" ? "moon" : "sun";
   const darkModeIcon = getIconByName(iconName);
@@ -36,7 +36,7 @@ const Header = () => {
       borderBottom="1px"
       justify="space-between"
     >
-      <HStack>
+      <Flex gap={2}>
         {isLoggedIn && (
           <IconButton
             aria-label="sidebar menu"
@@ -49,26 +49,30 @@ const Header = () => {
           onClick={toggleColorMode}
           icon={darkModeIcon}
         />
-      </HStack>
-      <HStack>
         {isLoggedIn && (
           <Menu>
             <MenuButton
               as={Button}
-              leftIcon={<Avatar name="Hossam Hamdy" src="" size="sm" />}
+              leftIcon={<Avatar name={token.fullName} src="" size="sm" />}
               rightIcon={getIconByName("dropdownMenu")}
             >
-              Hi,Hossam
+              Hi,{token.fullName.split(" ")[0]}
             </MenuButton>
             <MenuList>
-              <MenuItem>Profile</MenuItem>
+              <MenuItem
+                onClick={() => navigate(`${token.id}`, { state: token })}
+              >
+                Profile
+              </MenuItem>
               <MenuDivider />
               <MenuItem onClick={logout}>Logout</MenuItem>
             </MenuList>
           </Menu>
         )}
-        <Link to={"/"}>{getIconByName("logo")}</Link>
-      </HStack>
+      </Flex>
+      <Link aria-label="logo" to={"/"}>
+        {getIconByName("logo", { boxSize: 28 })}
+      </Link>
     </Flex>
   );
 };

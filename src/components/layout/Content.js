@@ -1,5 +1,5 @@
-import { Flex } from "@chakra-ui/react";
 import { useContext } from "react";
+import { Flex } from "@chakra-ui/react";
 import { Routes, Route } from "react-router-dom";
 
 import NewRestaurant from "../../pages/Restaurants/NewRestaurant";
@@ -22,13 +22,18 @@ const Content = () => {
   const { isLoggedIn } = useContext(AuthContext);
 
   return (
-    <Flex flex={1} p={2}>
+    <Flex p={2} flexGrow={1}>
       <Routes>
         {!isLoggedIn && <Route path="/" element={<Login />} />}
         {isLoggedIn && (
           <Route path="/">
             <Route index element={<Home />} />
-            <Route path="orders" element={<Orders />} />
+            <Route path=":id" element={<Details from="staff" />} />
+            <Route path="orders">
+              <Route index element={<Orders />} />
+              {/* <Route path="edit/:orderId" element={< />} /> */}
+              <Route path=":id" element={<Details from="order" />} />
+            </Route>
             <Route path="staff">
               <Route index element={<Staff />} />
               <Route path="new" element={<NewStaff />} />

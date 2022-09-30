@@ -29,7 +29,7 @@ const Chart = (props) => {
       <Text fontSize="larger" fontWeight="semibold" mb={5} color={color}>
         Last 6 Months (Revenue)
       </Text>
-      <ResponsiveContainer minWidth={500} minHeight={250}>
+      <ResponsiveContainer minWidth={500} maxHeight={250}>
         <AreaChart
           data={data}
           margin={{ top: 10, right: 30, left: 0, bottom: 0 }}

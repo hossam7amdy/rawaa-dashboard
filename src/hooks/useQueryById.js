@@ -6,17 +6,18 @@ import { useToast } from "@chakra-ui/react";
 
 const queryFn = Object.freeze({
   staff: ({ queryKey }) => request({ url: `${PATH.STAFF}/${queryKey[1]}` }),
-  orders: ({ queryKey }) => request({ url: `${PATH.ORDER}/${queryKey[1]}` }),
+  order: ({ queryKey }) =>
+    request({ url: `${PATH.ORDER}/orderDetail/${queryKey[1]}` }),
   products: ({ queryKey }) =>
     request({ url: `${PATH.PRODUCT}/${queryKey[1]}` }),
   categories: ({ queryKey }) =>
     request({ url: `${PATH.CATEGORY}/${queryKey[1]}` }),
   restaurants: ({ queryKey }) =>
     request({ url: `${PATH.RESTAURANT}/${queryKey[1]}` }),
+  address: ({ queryKey }) => request({ url: `${PATH.ADDRESS}/${queryKey[1]}` }),
 });
 
 const useQueryById = ({ key, id }) => {
-  console.log(key, id);
   const toast = useToast();
   const queryClient = useQueryClient();
 

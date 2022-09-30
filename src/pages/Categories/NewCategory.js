@@ -15,7 +15,7 @@ import Card from "../../components/UI/Card";
 const NewCategory = () => {
   const navigate = useNavigate();
   const { state: prevState } = useLocation();
-  const { mutate } = useMutateData("categories");
+  const { isLoading, mutate } = useMutateData("categories");
   const [Imagepreview, setImagePreview] = useState(
     prevState ? `${PATH.FILE}${prevState?.image}` : null
   );
@@ -119,6 +119,8 @@ const NewCategory = () => {
                   <CustomButton
                     type="submit"
                     colorScheme="teal"
+                    isLoading={isLoading}
+                    loadingText="Submitting"
                     name={!prevState ? "Add Category" : "Edit Category"}
                   />
                 </VStack>
