@@ -1,6 +1,5 @@
 import { getIconByName } from "../../utils/IconsFactory";
 import {
-  Link,
   Stat,
   Flex,
   StatLabel,
@@ -8,31 +7,29 @@ import {
   StatHelpText,
   StatNumber,
 } from "@chakra-ui/react";
-import Card from "../UI/Card";
 
-// {title, cur, prev, isMoney}
-const Widget = (props) => {
-  const { title, cur, prev } = props;
+import Card from "../UI/Card";
+import { CURRENCY_FORMATER } from "../../utils/config";
+
+const Widget = ({ title, cur, prev, isMoney }) => {
   const isIncreasing = cur > prev;
   const diff = (Math.abs(cur - prev) / 100) * 100;
-  const statValue = props?.isMoney ? `$${cur.toFixed(1)}` : cur;
-  const link = title.toLowerCase();
-  let linkText = `See all ${link}`;
-  let icon;
+  const statValue = isMoney ? CURRENCY_FORMATER(cur) : cur;
 
+  let icon;
   const iconConfig = {
     h: 6,
     w: 6,
     rounded: "md",
   };
-  if (link === "customers") {
+  if (title === "Customers") {
     icon = getIconByName("person", {
       ...iconConfig,
       bg: "red.200",
       color: "red.900",
     });
   }
-  if (link === "order") {
+  if (title === "Orders") {
     icon = getIconByName("cart", {
       ...iconConfig,
       p: 0.5,
@@ -40,16 +37,14 @@ const Widget = (props) => {
       color: "yellow.900",
     });
   }
-  if (link === "revenue") {
-    linkText = "See details";
+  if (title === "Revenue") {
     icon = getIconByName("dollar", {
       ...iconConfig,
       bg: "green.200",
       color: "green.900",
     });
   }
-  if (link === "income") {
-    linkText = "See details";
+  if (title === "Income") {
     icon = getIconByName("wallet", {
       ...iconConfig,
       bg: "purple.200",
@@ -62,21 +57,14 @@ const Widget = (props) => {
       <Stat>
         <Flex justify="space-between">
           <StatLabel>{title}</StatLabel>
-          <StatHelpText>
-            <StatArrow type={isIncreasing ? "increase" : "decrease"} />
-            {diff.toFixed(0)}
-          </StatHelpText>
+          {icon}
         </Flex>
 
         <StatNumber>{statValue}</StatNumber>
 
-        <StatHelpText
-          display="flex"
-          justifyContent="space-between"
-          alignItems="end"
-        >
-          <Link href={`/${link}`}>{linkText}</Link>
-          {icon}
+        <StatHelpText>
+          <StatArrow type={isIncreasing ? "increase" : "decrease"} />
+          {diff.toFixed(0)}
         </StatHelpText>
       </Stat>
     </Card>

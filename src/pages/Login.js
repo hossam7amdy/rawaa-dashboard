@@ -1,23 +1,37 @@
 import { Formik, Form } from "formik";
 import { useContext, useState } from "react";
-import { VStack, Heading, InputLeftElement, Container } from "@chakra-ui/react";
+import {
+  Text,
+  VStack,
+  Heading,
+  Container,
+  InputLeftElement,
+} from "@chakra-ui/react";
 
 import { VALIDATE_PASSWORD, VALIDATE_USERNAME } from "../utils/validations";
-import CustomInput from "../components/Input/CustomInput";
-import CustomButton from "../components/UI/CustomButton";
-import { AuthContext } from "../context/auth";
 import { getIconByName } from "../utils/IconsFactory";
+import { AuthContext } from "../context/auth";
+import CustomButton from "../components/UI/CustomButton";
+import { request } from "../utils/axios-utils";
+import CustomInput from "../components/Input/CustomInput";
+import { PATH } from "../utils/config";
 
 const Login = () => {
+  const [error, setError] = useState(null);
   const { login } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(null);
 
   const formSubmitHandler = (enteredValues) => {
     setIsLoading(true);
-    setTimeout(() => {
-      login();
-      setIsLoading(false);
-    }, 1000);
+    const config = {
+      url: `${PATH.STAFF}/login`,
+      method: "post",
+      data: enteredValues,
+    };
+    request(config)
+      .then((res) => login(res.data))
+      .catch((_) => setError("Invalid uername or password"))
+      .finally(() => setIsLoading(false));
   };
 
   return (
@@ -27,7 +41,7 @@ const Login = () => {
         initialValues={{ username: "", password: "" }}
         onSubmit={formSubmitHandler}
       >
-        <Form>
+        <Form onChange={() => setError(null)}>
           <VStack spacing={4}>
             <CustomInput
               type="text"
@@ -49,11 +63,14 @@ const Login = () => {
                 <InputLeftElement children={getIconByName("password")} />
               }
             />
+            {error && <Text color="red.500">{error}</Text>}
             <CustomButton
+              name="Login"
               type="submit"
               variant="outline"
-              isDisabled={isLoading}
-              name={!isLoading && "Login"}
+              isLoading={isLoading}
+              loadingText="Loading"
+              spinnerPlacement="end"
             />
           </VStack>
         </Form>
