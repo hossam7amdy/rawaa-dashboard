@@ -26,8 +26,6 @@ export const OrderDetailsModal = ({ isOpen, onClose, orderId }) => {
     id: orderId,
   });
 
-  console.log(orderData);
-
   const price = new Map([
     [1, "smallSizePrice"],
     [2, "mediumSizePrice"],

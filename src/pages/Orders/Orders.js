@@ -30,30 +30,19 @@ const calcTotalAmount = (order) => {
   return CURRENCY_FORMATER(total);
 };
 
-const getStatusInfo = (id) => {
-  let text, color;
-  if (id === 1) {
-    text = "Pending";
-    color = "orange.400";
-  } else if (id === 2) {
-    text = "Processing";
-    color = "teal.400";
-  } else if (id === 3) {
-    text = "Rejected";
-    color = "red.400";
-  } else if (id === 4) {
-    text = "Completed";
-    color = "green.400";
-  } else {
-    text = "Canceled";
-    color = "gray.400";
-  }
-
-  return (
-    <Text as="b" color={color}>
-      {text}
-    </Text>
-  );
+const statusText = {
+  1: "Pending",
+  2: "Processing",
+  3: "Rejected",
+  4: "Completed",
+  5: "Canceled",
+};
+const statusColor = {
+  1: "orange.400",
+  2: "teal.400",
+  3: "red.400",
+  4: "green.400",
+  5: "gray.400",
 };
 
 const Orders = () => {
@@ -199,7 +188,9 @@ const Orders = () => {
         <HStack>
           {!showForm && (
             <>
-              {getStatusInfo(order.orderStatus)}
+              <Text as="b" color={statusColor[order.orderStatus]}>
+                {statusText[order.orderStatus]}
+              </Text>
               {[1, 2].includes(order.orderStatus) && (
                 <IconButton
                   size="xs"

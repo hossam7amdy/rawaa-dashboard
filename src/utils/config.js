@@ -9,8 +9,8 @@ export const PATH = Object.freeze({
   CATEGORY: "/en/api/cp/category",
   RESTAURANT: "/en/api/cp/restaurant",
   STATS: "/ar/api/cp/Order/totalPrice",
-  ADDRESS: "api/client/DeliveryAddress",
-  FILE: "http://www.rawaa.somee.com/api/file/",
+  ADDRESS: "api/client/deliveryaddress",
+  FILE: "https://www.rawaa.somee.com/api/file/",
 });
 
 // sidebar link names

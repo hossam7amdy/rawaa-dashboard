@@ -15,6 +15,7 @@ import {
 
 export const DetailsModal = ({ isOpen, onClose, modalData }) => {
   const { header, data } = modalData;
+  console.log(modalData);
   const ignore = [
     "id",
     "isDeleted",
