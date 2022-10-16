@@ -2,7 +2,7 @@
 
 goal is to quickly and easily let them interact with the data and content.
 Normally, an admin dashboard is a single screen that includes all crucial information.
-When it comes to creating an admin table , your task is to build something complex but in a simple shell.
+When it comes to creating an admin table, your task is to build something complex but in a simple shell.
 
 # Experience
 
