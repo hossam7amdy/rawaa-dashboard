@@ -1,6 +1,3 @@
-import { useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
-
 import {
   Flex,
   Menu,
@@ -13,8 +10,10 @@ import {
   MenuDivider,
   useColorMode,
 } from "@chakra-ui/react";
+import { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-import { getIconByName } from "../../utils/IconsFactory";
+import { Icon } from "../UI/Icons";
 import { AuthContext } from "../../context/auth";
 
 const Header = () => {
@@ -24,7 +23,7 @@ const Header = () => {
   const { isLoggedIn, toggleSidebar, logout, token } = useContext(AuthContext);
 
   const iconName = colorMode === "light" ? "moon" : "sun";
-  const darkModeIcon = getIconByName(iconName);
+  const darkModeIcon = <Icon name={iconName} />;
 
   return (
     <Flex
@@ -41,7 +40,7 @@ const Header = () => {
           <IconButton
             aria-label="sidebar menu"
             onClick={toggleSidebar}
-            icon={getIconByName("hamburgerMenu")}
+            icon={<Icon name="hamburgerMenu" />}
           />
         )}
         <IconButton
@@ -54,7 +53,7 @@ const Header = () => {
             <MenuButton
               as={Button}
               leftIcon={<Avatar name={token.fullName} src="" size="sm" />}
-              rightIcon={getIconByName("dropdownMenu")}
+              rightIcon={<Icon name="dropdownMenu" />}
             >
               Hi,{token.fullName.split(" ")[0]}
             </MenuButton>
@@ -71,7 +70,7 @@ const Header = () => {
         )}
       </Flex>
       <Link aria-label="logo" to={"/"}>
-        {getIconByName("logo", { boxSize: 28 })}
+        {<Icon name="logo" boxSize={28} />}
       </Link>
     </Flex>
   );

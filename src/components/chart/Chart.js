@@ -8,7 +8,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { GRAY_COLOR } from "../../utils/config";
+import { GRAY_COLOR } from "../../data/constants";
 import Card from "../UI/Card";
 
 const data = [

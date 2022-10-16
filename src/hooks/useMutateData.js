@@ -2,7 +2,7 @@ import { useToast } from "@chakra-ui/react";
 import { useMutation, useQueryClient } from "react-query";
 
 import { request } from "../utils/axios-utils";
-import { PATH } from "../utils/config";
+import { PATH } from "../data/constants";
 
 const queryFn = Object.freeze({
   staff: (options) => request({ url: PATH.STAFF, ...options }),
@@ -32,10 +32,10 @@ const useMutateData = (key) => {
   };
 
   const rollback = (error, _, context) => {
-    // render toast
+    const message = error?.response?.data?.message || error.message;
     toast({
       title: "Failed",
-      description: `Error Occurred: ${error.message}`,
+      description: message,
       status: "error",
       duration: 5000,
       isClosable: true,

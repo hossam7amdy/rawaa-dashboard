@@ -1,4 +1,3 @@
-import { getIconByName } from "../../utils/IconsFactory";
 import {
   Stat,
   Flex,
@@ -7,9 +6,10 @@ import {
   StatHelpText,
   StatNumber,
 } from "@chakra-ui/react";
+import { Icon } from "../UI/Icons";
 
+import { CURRENCY_FORMATER } from "../../utils/helpers";
 import Card from "../UI/Card";
-import { CURRENCY_FORMATER } from "../../utils/config";
 
 const Widget = ({ title, cur, prev, isMoney }) => {
   const isIncreasing = cur > prev;
@@ -23,33 +23,28 @@ const Widget = ({ title, cur, prev, isMoney }) => {
     rounded: "md",
   };
   if (title === "Customers") {
-    icon = getIconByName("person", {
-      ...iconConfig,
-      bg: "red.200",
-      color: "red.900",
-    });
+    icon = <Icon name="person" {...iconConfig} bg="red.200" color="red.900" />;
   }
   if (title === "Orders") {
-    icon = getIconByName("cart", {
-      ...iconConfig,
-      p: 0.5,
-      bg: "yellow.200",
-      color: "yellow.900",
-    });
+    icon = (
+      <Icon
+        name="cart"
+        {...iconConfig}
+        p={0.5}
+        bg="yellow.200"
+        color="yellow.900"
+      />
+    );
   }
   if (title === "Revenue") {
-    icon = getIconByName("dollar", {
-      ...iconConfig,
-      bg: "green.200",
-      color: "green.900",
-    });
+    icon = (
+      <Icon name="dollar" {...iconConfig} bg="green.200" color="green.900" />
+    );
   }
   if (title === "Income") {
-    icon = getIconByName("wallet", {
-      ...iconConfig,
-      bg: "purple.200",
-      color: "purple.900",
-    });
+    icon = (
+      <Icon name="wallet" {...iconConfig} bg="purple.200" color="purple.900" />
+    );
   }
 
   return (

@@ -14,7 +14,7 @@ import CustomButton from "../components/UI/CustomButton";
 import PreviewImage from "../components/UI/PreviewImage";
 import useQueryById from "../hooks/useQueryById";
 import CardHeader from "../components/UI/CardHeader";
-import { PATH } from "../utils/config";
+import { PATH } from "../data/constants";
 import Card from "../components/UI/Card";
 
 const Details = ({ from }) => {

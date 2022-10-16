@@ -13,10 +13,10 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 
-import { GRAY_COLOR, SIDEBAR_LIST } from "../../utils/config";
-import { getIconByName } from "../../utils/IconsFactory";
+import { GRAY_COLOR, SIDEBAR_LIST } from "../../data/constants";
 import { AuthContext } from "../../context/auth";
 import CustomButton from "../UI/CustomButton";
+import { Icon } from "../UI/Icons";
 
 const Sidebar = () => {
   const { logout, token } = useContext(AuthContext);
@@ -26,7 +26,7 @@ const Sidebar = () => {
     token.userName === "admin" ? SIDEBAR_LIST : [SIDEBAR_LIST[0]];
 
   return (
-    <VStack p={2} as="nav" w="200px" align="start" borderRight="1px">
+    <VStack as="nav" p={2} w="200px" align="start" borderRight="1px">
       <Heading size="xs" textTransform="uppercase" color={color}>
         Main
       </Heading>
@@ -42,7 +42,7 @@ const Sidebar = () => {
         to="/"
       >
         <Flex align="center" gap={1}>
-          {getIconByName("dashboard")}
+          {<Icon name="dashboard" />}
           <Text> Dashboard </Text>
         </Flex>
       </Link>
@@ -65,7 +65,7 @@ const Sidebar = () => {
               to={link.toLowerCase()}
             >
               <Flex align="center" gap={1}>
-                {getIconByName(link.toLowerCase())}
+                {<Icon name={link.toLowerCase()} />}
                 {link}
               </Flex>
             </Link>
@@ -79,7 +79,7 @@ const Sidebar = () => {
         name="Logout"
         alignSelf="center"
         onClick={logout}
-        leftIcon={getIconByName("exit")}
+        leftIcon={<Icon name="exit" />}
       />
     </VStack>
   );

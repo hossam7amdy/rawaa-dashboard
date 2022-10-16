@@ -1,6 +1,6 @@
-import { createContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useBoolean } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+import { createContext, useState } from "react";
 
 export const AuthContext = createContext({
   token: {},

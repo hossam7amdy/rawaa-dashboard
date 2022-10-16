@@ -1,5 +1,5 @@
 import { Box, useColorModeValue } from "@chakra-ui/react";
-import { LIGHT_GRAY } from "../../utils/config";
+import { LIGHT_GRAY } from "../../data/constants";
 
 const Card = ({ children, ...props }) => {
   return (
