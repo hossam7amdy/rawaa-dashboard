@@ -9,12 +9,12 @@ import {
 } from "@chakra-ui/react";
 
 import { VALIDATE_PASSWORD, VALIDATE_USERNAME } from "../utils/validations";
-import { getIconByName } from "../utils/IconsFactory";
+import { Icon } from "../components/UI/Icons";
 import { AuthContext } from "../context/auth";
 import CustomButton from "../components/UI/CustomButton";
 import { request } from "../utils/axios-utils";
 import CustomInput from "../components/Input/CustomInput";
-import { PATH } from "../utils/config";
+import { PATH } from "../data/constants";
 
 const Login = () => {
   const [error, setError] = useState(null);
@@ -50,7 +50,7 @@ const Login = () => {
               placeholder="Enter your username"
               validate={VALIDATE_USERNAME}
               leftElement={
-                <InputLeftElement mr={5} children={getIconByName("person")} />
+                <InputLeftElement mr={5} children={<Icon name="person" />} />
               }
             />
             <CustomInput
@@ -60,7 +60,7 @@ const Login = () => {
               placeholder="Enter your password"
               validate={VALIDATE_PASSWORD}
               leftElement={
-                <InputLeftElement children={getIconByName("password")} />
+                <InputLeftElement children={<Icon name="password" />} />
               }
             />
             {error && <Text color="red.500">{error}</Text>}

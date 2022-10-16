@@ -1,25 +1,30 @@
-import { useState } from "react";
-import { createColumnHelper } from "@tanstack/react-table";
 import {
   Flex,
   Text,
-  Input,
   HStack,
   Select,
-  FormLabel,
   IconButton,
-  FormControl,
   useDisclosure,
 } from "@chakra-ui/react";
+import { useState } from "react";
 
-import { CURRENCY_FORMATER, DATE_FORMATER } from "../../utils/config";
+import {
+  DATE_FORMATER,
+  CURRENCY_FORMATER,
+  FORMATE_TABLE_HEADER,
+} from "../../utils/helpers";
 import { usePaginatedQueries } from "../../hooks/usePaginatedQueries";
-import { OrderDetailsModal } from "../../components/UI/OrderDetailsModal";
-import { getIconByName } from "../../utils/IconsFactory";
-import { DetailsModal } from "../../components/UI/DetailsModal";
+import { OrderContentModal } from "./OrderContentModal";
+import { DetailsModal } from "./DetailsModal";
 import useMutateData from "../../hooks/useMutateData";
 import CustomButton from "../../components/UI/CustomButton";
 import TableBox from "../../components/table/TableBox";
+import { Icon } from "../../components/UI/Icons";
+
+import { PageNumberInput } from "./PageNumberInput";
+import { PageSizeInput } from "./PageSizeInput";
+import { StateSelector } from "./StatusSelector";
+import { ORDER_STATES } from "../../data/constants";
 
 // defaults
 const day = 30;
@@ -75,15 +80,6 @@ const Orders = () => {
 
   const isLast = orders && orders?.length < pageSize;
 
-  const setPageNumberHandler = (arrow) => {
-    if (arrow === "prev" && pageNumber !== 1) {
-      setPageNumber((prev) => prev - 1);
-    }
-    if (arrow === "next" && !isLast) {
-      setPageNumber((prev) => prev + 1);
-    }
-  };
-
   const editOrderStateHandler = ({ orderStatus, ...order }) => {
     if (!orderState) return;
     if (orderState !== orderStatus) {
@@ -101,55 +97,25 @@ const Orders = () => {
   };
 
   // table data
-  const columnHelper = createColumnHelper();
-  const header = [
-    columnHelper.accessor("id", {
-      cell: (info) => info.getValue(),
-      header: "id",
-    }),
-    columnHelper.accessor("orderNumber", {
-      cell: (info) => info.getValue(),
-      header: "number",
-    }),
-    columnHelper.accessor("customer", {
-      cell: (info) => info.getValue(),
-      header: "customer",
-    }),
-    columnHelper.accessor("deliveryAddress", {
-      cell: (info) => info.getValue(),
-      header: "delivery address",
-    }),
-    columnHelper.accessor("dataTime", {
-      cell: (info) => info.getValue(),
-      header: "date/time",
-    }),
-    columnHelper.accessor("totalAmount", {
-      cell: (info) => info.getValue(),
-      header: "total-amount",
-    }),
-    columnHelper.accessor("state", {
-      cell: (info) => info.getValue(),
-      header: "state",
-    }),
+  const headerContent = [
+    "id",
+    "number",
+    "customer",
+    "delivery address",
+    "date/time",
+    "total-amount",
+    "state",
   ];
-
-  // map order states
-  const stateOptions = [
-    { key: 1, value: "Pending" },
-    { key: 2, value: "Processing" },
-    { key: 3, value: "Rejected" },
-    { key: 4, value: "Completed" },
-    { key: 5, value: "Canceled" },
-  ];
+  const header = FORMATE_TABLE_HEADER(headerContent);
 
   const data = orders?.map((order) => {
     return {
       id: order.id,
-      orderNumber: (
+      number: (
         <CustomButton
           size="sm"
           variant="link"
-          color="blue.400"
+          colorScheme="blue"
           name={order.orderNumber}
           onClick={() => {
             setOrderId(order.id);
@@ -161,7 +127,7 @@ const Orders = () => {
         <CustomButton
           size="sm"
           variant="link"
-          color="blue.400"
+          colorScheme="blue"
           name={order.customer.fullName}
           onClick={() => {
             onOpen();
@@ -169,11 +135,11 @@ const Orders = () => {
           }}
         />
       ),
-      deliveryAddress: (
+      "delivery address": (
         <CustomButton
           size="sm"
           variant="link"
-          color="blue.400"
+          colorScheme="blue"
           name={order.deliveryAddress.city}
           onClick={() => {
             setModalData({
@@ -194,7 +160,7 @@ const Orders = () => {
               {[1, 2].includes(order.orderStatus) && (
                 <IconButton
                   size="xs"
-                  icon={getIconByName("edit")}
+                  icon={<Icon name="edit" />}
                   onClick={() => setShowForm(true)}
                 />
               )}
@@ -208,7 +174,7 @@ const Orders = () => {
                 value={orderState}
                 onChange={(event) => setOrderState(+event.target.value)}
               >
-                {stateOptions.map((option) =>
+                {ORDER_STATES.map((option) =>
                   option.key > order.orderStatus && option.key !== 5 ? (
                     <option key={option.key} value={option.key}>
                       {option.value}
@@ -220,12 +186,12 @@ const Orders = () => {
               </Select>
               <IconButton
                 size="xs"
-                icon={getIconByName("check")}
+                icon={<Icon name="check" />}
                 onClick={() => editOrderStateHandler(order)}
               />
               <IconButton
                 size="xs"
-                icon={getIconByName("close")}
+                icon={<Icon name="close" />}
                 onClick={() => {
                   setOrderState("");
                   setShowForm(false);
@@ -235,23 +201,25 @@ const Orders = () => {
           )}
         </HStack>
       ),
-      totalAmount: calcTotalAmount(order),
-      dataTime: DATE_FORMATER(order.orderDate),
+      "date/time": DATE_FORMATER(order.orderDate),
+      "total-amount": calcTotalAmount(order),
     };
   });
 
   return (
     <Flex minW="full" flexDir="column" gap={2}>
-      {isOpen && (
-        <DetailsModal modalData={modalData} onClose={onClose} isOpen={isOpen} />
-      )}
-      {isOpenOrder && (
-        <OrderDetailsModal
-          orderId={orderId}
-          onClose={onCloseOrder}
-          isOpen={isOpenOrder}
-        />
-      )}
+      <DetailsModal
+        modalData={modalData || {}}
+        onClose={onClose}
+        isOpen={isOpen}
+      />
+      <OrderContentModal
+        orderId={orderId}
+        onClose={onCloseOrder}
+        isOpen={isOpenOrder}
+      />
+
+      {/* table contents */}
       <TableBox
         columns={header}
         title={"orders"}
@@ -259,40 +227,18 @@ const Orders = () => {
         isLoading={isLoading}
       />
 
+      {/* pagination */}
       <HStack spacing={10}>
-        <HStack>
-          <IconButton
-            icon={getIconByName("arrowLeft")}
-            isDisabled={pageNumber === 1}
-            onClick={() => setPageNumberHandler("prev")}
-          />
-          <IconButton
-            icon={getIconByName("arrowRight")}
-            isDisabled={isLast}
-            onClick={() => setPageNumberHandler("next")}
-          />
-        </HStack>
-
-        <Select
-          w="200px"
-          value={ordersState}
-          onChange={(event) => setOrdersState(+event.target.value)}
-        >
-          {stateOptions.map((option, idx) => (
-            <option key={idx} value={option.key}>
-              {option.value}
-            </option>
-          ))}
-        </Select>
-        <FormControl w="250px" display="flex" alignItems="center">
-          <FormLabel>TableSize</FormLabel>
-          <Input
-            type="number"
-            name="pageSize"
-            defaultValue={pageSize}
-            onChange={(event) => setPageSize(+event.target.value)}
-          />
-        </FormControl>
+        <PageNumberInput
+          isLast={isLast}
+          pageNumber={pageNumber}
+          setPageNumber={setPageNumber}
+        />
+        <PageSizeInput pageSize={pageSize} setPageSize={setPageSize} />
+        <StateSelector
+          ordersState={ordersState}
+          setOrdersState={setOrdersState}
+        />
       </HStack>
     </Flex>
   );

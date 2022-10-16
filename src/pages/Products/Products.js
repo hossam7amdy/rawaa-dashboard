@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createColumnHelper } from "@tanstack/react-table";
-import { Image, HStack, useDisclosure } from "@chakra-ui/react";
+import { HStack, useDisclosure } from "@chakra-ui/react";
 
+import { FORMATE_TABLE_HEADER } from "../../utils/helpers";
 import useMutateData from "../../hooks/useMutateData";
 import useQueryData from "../../hooks/useQueryData";
 import CustomButton from "../../components/UI/CustomButton";
+import PreviewImage from "../../components/UI/PreviewImage";
 import DeleteModal from "../../components/UI/DeleteModal";
 import TableBox from "../../components/table/TableBox";
-import { PATH } from "../../utils/config";
+import { PATH } from "../../data/constants";
 
 const Products = () => {
   const navigate = useNavigate();
@@ -21,49 +22,19 @@ const Products = () => {
     mutate({ url: `${PATH.PRODUCT}/${productId}`, method: "delete" });
   };
 
-  const columnHelper = createColumnHelper();
-  const header = [
-    columnHelper.accessor("id", {
-      cell: (info) => info.getValue(),
-      header: "id",
-    }),
-    columnHelper.accessor("image", {
-      cell: (info) => info.getValue(),
-      header: "image",
-    }),
-    columnHelper.accessor("title", {
-      cell: (info) => info.getValue(),
-      header: "title",
-    }),
-    columnHelper.accessor("small-price", {
-      cell: (info) => info.getValue(),
-      header: "small-price",
-    }),
-    columnHelper.accessor("medium-price", {
-      cell: (info) => info.getValue(),
-      header: "medium-price",
-    }),
-    columnHelper.accessor("large-price", {
-      cell: (info) => info.getValue(),
-      header: "large-price",
-    }),
-    columnHelper.accessor("discount", {
-      cell: (info) => info.getValue(),
-      header: "discount",
-    }),
-    columnHelper.accessor("calories", {
-      cell: (info) => info.getValue(),
-      header: "calories",
-    }),
-    columnHelper.accessor("tastes", {
-      cell: (info) => info.getValue(),
-      header: "tastes",
-    }),
-    columnHelper.accessor("actions", {
-      cell: (info) => info.getValue(),
-      header: "actions",
-    }),
+  const headerContent = [
+    "id",
+    "image",
+    "title",
+    "small-price",
+    "medium-price",
+    "large-price",
+    "discount",
+    "calories",
+    "tastes",
+    "actions",
   ];
+  const header = FORMATE_TABLE_HEADER(headerContent);
 
   const bodyRows = products?.map((product) => {
     return {
@@ -80,7 +51,7 @@ const Products = () => {
         product.bigSizePrice ? product.bigSizePrice + "L.E" : "-"
       }`,
       image: (
-        <Image
+        <PreviewImage
           rounded="md"
           boxSize="50px"
           alt={product.titleEn}

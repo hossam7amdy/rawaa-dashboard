@@ -22,6 +22,7 @@ const useQueryById = ({ key, id }) => {
   const queryClient = useQueryClient();
 
   return useQuery([key, id], queryFn[key], {
+    enabled: Boolean(id),
     onError: (error) => {
       const message = error?.response?.data?.message || error.message;
       toast({

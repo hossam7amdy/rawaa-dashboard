@@ -1,19 +1,19 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   Text,
   HStack,
   useDisclosure,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
+import { FORMATE_TABLE_HEADER } from "../../utils/helpers";
 import useMutateData from "../../hooks/useMutateData";
 import CustomButton from "../../components/UI/CustomButton";
 import useQueryData from "../../hooks/useQueryData";
 import DeleteModal from "../../components/UI/DeleteModal";
 import TableBox from "../../components/table/TableBox";
-import { PATH } from "../../utils/config";
-import { createColumnHelper } from "@tanstack/react-table";
+import { PATH } from "../../data/constants";
 
 // Helper Method
 const formatDate = function (date, locale) {
@@ -43,37 +43,16 @@ const Staff = () => {
     mutate({ method: "delete", url: `${PATH.STAFF}/${staffId}` });
   };
 
-  const columnHelper = createColumnHelper();
-  const header = [
-    columnHelper.accessor("id", {
-      cell: (info) => info.getValue(),
-      header: "id",
-    }),
-    columnHelper.accessor("username", {
-      cell: (info) => info.getValue(),
-      header: "username",
-    }),
-    columnHelper.accessor("job", {
-      cell: (info) => info.getValue(),
-      header: "job",
-    }),
-    columnHelper.accessor("branch-id", {
-      cell: (info) => info.getValue(),
-      header: "branch-id",
-    }),
-    columnHelper.accessor("joined", {
-      cell: (info) => info.getValue(),
-      header: "joined",
-    }),
-    columnHelper.accessor("status", {
-      cell: (info) => info.getValue(),
-      header: "status",
-    }),
-    columnHelper.accessor("actions", {
-      cell: (info) => info.getValue(),
-      header: "actions",
-    }),
+  const headerContent = [
+    "id",
+    "username",
+    "job",
+    "branch-id",
+    "joined",
+    "status",
+    "actions",
   ];
+  const header = FORMATE_TABLE_HEADER(headerContent);
 
   const data = staff?.map((emp) => {
     return {

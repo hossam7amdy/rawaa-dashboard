@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { HStack, useDisclosure } from "@chakra-ui/react";
 import { createColumnHelper } from "@tanstack/react-table";
+import { HStack, useDisclosure } from "@chakra-ui/react";
 
-import RestaurantState from "../../components/restaurant/RestaurantState";
 import useMutateData from "../../hooks/useMutateData";
-import CustomButton from "../../components/UI/CustomButton";
 import useQueryData from "../../hooks/useQueryData";
+import CustomButton from "../../components/UI/CustomButton";
 import DeleteModal from "../../components/UI/DeleteModal";
 import TableBox from "../../components/table/TableBox";
-import { PATH } from "../../utils/config";
+import { PATH } from "../../data/constants";
+import State from "./State";
 
 const Restaurants = () => {
   const navigate = useNavigate();
@@ -58,7 +58,7 @@ const Restaurants = () => {
     return {
       ...branch,
       name: nameEn,
-      state: <RestaurantState state={state} />,
+      state: <State state={state} />,
       actions: (
         <HStack>
           <CustomButton

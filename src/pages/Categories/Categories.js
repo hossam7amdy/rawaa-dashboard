@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createColumnHelper } from "@tanstack/react-table";
-import { Image, HStack, useDisclosure } from "@chakra-ui/react";
+import { HStack, useDisclosure } from "@chakra-ui/react";
 
+import { FORMATE_TABLE_HEADER } from "../../utils/helpers";
 import useMutateData from "../../hooks/useMutateData";
 import CustomButton from "../../components/UI/CustomButton";
 import useQueryData from "../../hooks/useQueryData";
+import PreviewImage from "../../components/UI/PreviewImage";
 import DeleteModal from "../../components/UI/DeleteModal";
 import TableBox from "../../components/table/TableBox";
-import { PATH } from "../../utils/config";
+import { PATH } from "../../data/constants";
 
 const Categories = () => {
   const navigate = useNavigate();
@@ -21,39 +22,13 @@ const Categories = () => {
     mutate({ url: `${PATH.CATEGORY}/${categoryId}`, method: "delete" });
   };
 
-  const columnHelper = createColumnHelper();
-  const header = [
-    columnHelper.accessor("id", {
-      cell: (info) => info.getValue(),
-      header: "id",
-    }),
-    columnHelper.accessor("image", {
-      cell: (info) => info.getValue(),
-      header: "image",
-    }),
-    columnHelper.accessor("titleEn", {
-      cell: (info) => info.getValue(),
-      header: "title-en",
-    }),
-    columnHelper.accessor("titleAr", {
-      cell: (info) => info.getValue(),
-      header: "title-ar",
-    }),
-    columnHelper.accessor("actions", {
-      cell: (info) => info.getValue(),
-      header: "actions",
-    }),
-  ];
+  const headerContent = ["id", "image", "titleEn", "titleAr", "actions"];
+  const header = FORMATE_TABLE_HEADER(headerContent);
 
   const data = categories?.map(({ image, ...category }) => {
     return {
       image: (
-        <Image
-          src={PATH.FILE + image}
-          alt={image}
-          borderRadius="md"
-          boxSize="50px"
-        />
+        <PreviewImage src={PATH.FILE + image} boxSize="50px" rounded="md" />
       ),
       actions: (
         <HStack>
