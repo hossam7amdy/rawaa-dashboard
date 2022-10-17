@@ -6,6 +6,12 @@ const RestaurantState = ({ state }) => {
   const greenColor = useColorModeValue("green.200", "green.400");
   const yellowColor = useColorModeValue("yellow.200", "yellow.400");
 
+  const stateText = {
+    1: "Open",
+    2: "Closed",
+    3: "Maintenance",
+    4: "Soon",
+  };
   const stateColor = {
     1: greenColor,
     2: redColor,
@@ -15,7 +21,7 @@ const RestaurantState = ({ state }) => {
 
   return (
     <Text rounded="xl" w="min-content" px={1} bg={stateColor[state]}>
-      Soon
+      {stateText[state]}
     </Text>
   );
 };

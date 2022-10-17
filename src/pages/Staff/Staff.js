@@ -1,17 +1,13 @@
-import {
-  Text,
-  HStack,
-  useDisclosure,
-  useColorModeValue,
-} from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDisclosure } from "@chakra-ui/react";
 
 import { FORMATE_TABLE_HEADER } from "../../utils/helpers";
+import { ActionButtons } from "../../components/Button/ActionButtons";
 import useMutateData from "../../hooks/useMutateData";
-import CustomButton from "../../components/UI/CustomButton";
 import useQueryData from "../../hooks/useQueryData";
-import DeleteModal from "../../components/UI/DeleteModal";
+import DeleteModal from "../../components/Modal/DeleteModal";
+import { State } from "./State";
 import TableBox from "../../components/table/TableBox";
 import { PATH } from "../../data/constants";
 
@@ -35,9 +31,7 @@ const Staff = () => {
   const { mutate } = useMutateData("staff");
   const [staffId, setStafftId] = useState();
   const { onOpen, onClose, isOpen } = useDisclosure();
-  const redColor = useColorModeValue("red.200", "red.400");
   const { isLoading, data: staff } = useQueryData("staff");
-  const greenColor = useColorModeValue("green.200", "green.400");
 
   const deleteStaffHandler = () => {
     mutate({ method: "delete", url: `${PATH.STAFF}/${staffId}` });
@@ -61,36 +55,15 @@ const Staff = () => {
       job: emp.jop,
       "branch-id": emp.restaurantId,
       joined: formatDate(emp.createOn),
-      status: (
-        <Text
-          rounded="xl"
-          w="min-content"
-          px={1}
-          bg={emp.active ? greenColor : redColor}
-        >
-          {emp.active ? "Active" : "Inactive"}
-        </Text>
-      ),
+      status: <State isActive={emp.active} />,
       actions: (
-        <HStack>
-          <CustomButton
-            size="xs"
-            name="View"
-            variant="outline"
-            colorScheme="green"
-            onClick={() => navigate(`${emp.id}`, { state: emp })}
-          />
-          <CustomButton
-            size="xs"
-            name="Delete"
-            variant="outline"
-            colorScheme="red"
-            onClick={() => {
-              onOpen();
-              setStafftId(emp.id);
-            }}
-          />
-        </HStack>
+        <ActionButtons
+          onView={() => navigate(`${emp.id}`, { state: emp })}
+          onDelete={() => {
+            onOpen();
+            setStafftId(emp.id);
+          }}
+        />
       ),
     };
   });

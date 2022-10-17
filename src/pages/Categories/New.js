@@ -5,7 +5,7 @@ import { Container, HStack, VStack } from "@chakra-ui/react";
 
 import { ARABIC_TEXT, ENGLISH_TEXT, IMAGE_FILE } from "../../utils/validations";
 import useMutateData from "../../hooks/useMutateData";
-import CustomButton from "../../components/UI/CustomButton";
+import CustomButton from "../../components/Button/CustomButton";
 import CustomInput from "../../components/Input/CustomInput";
 import CardHeader from "../../components/UI/CardHeader";
 import InputFile from "../../components/Input/FileInput";

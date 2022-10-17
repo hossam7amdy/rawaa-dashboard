@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import { Box, Heading, HStack } from "@chakra-ui/react";
 
 import DataTable from "./DataTable";
-import CustomButton from "../UI/CustomButton";
+import CustomButton from "../Button/CustomButton";
 
 const TableBox = ({ title, hasButton, ...props }) => {
   return (

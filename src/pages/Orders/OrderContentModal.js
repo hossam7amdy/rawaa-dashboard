@@ -12,7 +12,7 @@ import { CURRENCY_FORMATER } from "../../utils/helpers";
 import LoadingSpinner from "../../components/UI/LoadingSpinner";
 import PreviewImage from "../../components/UI/PreviewImage";
 import useQueryById from "../../hooks/useQueryById";
-import { Modal } from "../../components/UI/Modal";
+import { Modal } from "../../components/Modal/Modal";
 import { PATH } from "../../data/constants";
 
 export const OrderContentModal = ({ isOpen, onClose, orderId }) => {

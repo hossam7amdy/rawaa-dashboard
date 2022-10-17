@@ -18,7 +18,7 @@ import {
 import { GRAY_COLOR, PATH } from "../../data/constants";
 import RadioSelection from "../../components/Input/RadioSelection";
 import useMutateData from "../../hooks/useMutateData";
-import CustomButton from "../../components/UI/CustomButton";
+import CustomButton from "../../components/Button/CustomButton";
 import CustomInput from "../../components/Input/CustomInput";
 import CardHeader from "../../components/UI/CardHeader";
 import Card from "../../components/UI/Card";

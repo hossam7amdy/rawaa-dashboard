@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { HStack, useDisclosure } from "@chakra-ui/react";
+import { useDisclosure } from "@chakra-ui/react";
 
 import { FORMATE_TABLE_HEADER } from "../../utils/helpers";
+import { ActionButtons } from "../../components/Button/ActionButtons";
 import useMutateData from "../../hooks/useMutateData";
 import useQueryData from "../../hooks/useQueryData";
-import CustomButton from "../../components/UI/CustomButton";
 import PreviewImage from "../../components/UI/PreviewImage";
-import DeleteModal from "../../components/UI/DeleteModal";
+import DeleteModal from "../../components/Modal/DeleteModal";
 import TableBox from "../../components/table/TableBox";
 import { PATH } from "../../data/constants";
 
@@ -59,25 +59,13 @@ const Products = () => {
         />
       ),
       actions: (
-        <HStack>
-          <CustomButton
-            name="View"
-            size="xs"
-            variant="outline"
-            colorScheme="green"
-            onClick={() => navigate(`${product.id}`, { state: product })}
-          />
-          <CustomButton
-            name="Delete"
-            size="xs"
-            variant="outline"
-            colorScheme="red"
-            onClick={() => {
-              onOpen();
-              setProductId(product.id);
-            }}
-          />
-        </HStack>
+        <ActionButtons
+          onView={() => navigate(`${product.id}`, { state: product })}
+          onDelete={() => {
+            onOpen();
+            setProductId(product.id);
+          }}
+        />
       ),
     };
   });

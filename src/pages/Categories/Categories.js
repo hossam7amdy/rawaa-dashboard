@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { HStack, useDisclosure } from "@chakra-ui/react";
+import { useDisclosure } from "@chakra-ui/react";
 
 import { FORMATE_TABLE_HEADER } from "../../utils/helpers";
+import { ActionButtons } from "../../components/Button/ActionButtons";
 import useMutateData from "../../hooks/useMutateData";
-import CustomButton from "../../components/UI/CustomButton";
 import useQueryData from "../../hooks/useQueryData";
 import PreviewImage from "../../components/UI/PreviewImage";
-import DeleteModal from "../../components/UI/DeleteModal";
+import DeleteModal from "../../components/Modal/DeleteModal";
 import TableBox from "../../components/table/TableBox";
 import { PATH } from "../../data/constants";
 
@@ -31,27 +31,15 @@ const Categories = () => {
         <PreviewImage src={PATH.FILE + image} boxSize="50px" rounded="md" />
       ),
       actions: (
-        <HStack>
-          <CustomButton
-            name="View"
-            size="xs"
-            variant="outline"
-            colorScheme="green"
-            onClick={() =>
-              navigate(`${category.id}`, { state: { image, ...category } })
-            }
-          />
-          <CustomButton
-            name="Delete"
-            size="xs"
-            variant="outline"
-            colorScheme="red"
-            onClick={() => {
-              onOpen();
-              setCategoryId(category.id);
-            }}
-          />
-        </HStack>
+        <ActionButtons
+          onView={() =>
+            navigate(`${category.id}`, { state: { image, ...category } })
+          }
+          onDelete={() => {
+            onOpen();
+            setCategoryId(category.id);
+          }}
+        />
       ),
       ...category,
     };

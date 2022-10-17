@@ -15,7 +15,7 @@ import {
 
 import { GRAY_COLOR, SIDEBAR_LIST } from "../../data/constants";
 import { AuthContext } from "../../context/auth";
-import CustomButton from "../UI/CustomButton";
+import CustomButton from "../Button/CustomButton";
 import { Icon } from "../UI/Icons";
 
 const Sidebar = () => {

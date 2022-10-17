@@ -1,4 +1,3 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Box,
   Flex,
@@ -8,9 +7,10 @@ import {
   ListItem,
   Container,
 } from "@chakra-ui/react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import LoadingSpinner from "../components/UI/LoadingSpinner";
-import CustomButton from "../components/UI/CustomButton";
+import CustomButton from "../components/Button/CustomButton";
 import PreviewImage from "../components/UI/PreviewImage";
 import useQueryById from "../hooks/useQueryById";
 import CardHeader from "../components/UI/CardHeader";

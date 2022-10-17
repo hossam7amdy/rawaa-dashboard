@@ -11,7 +11,7 @@ import {
 import { AuthContext } from "../../context/auth";
 import RadioSelection from "../../components/Input/RadioSelection";
 import useMutateData from "../../hooks/useMutateData";
-import CustomButton from "../../components/UI/CustomButton";
+import CustomButton from "../../components/Button/CustomButton";
 import useQueryData from "../../hooks/useQueryData";
 import CustomInput from "../../components/Input/CustomInput";
 import CardHeader from "../../components/UI/CardHeader";

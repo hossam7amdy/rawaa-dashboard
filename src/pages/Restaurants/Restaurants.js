@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createColumnHelper } from "@tanstack/react-table";
-import { HStack, useDisclosure } from "@chakra-ui/react";
+import { useDisclosure } from "@chakra-ui/react";
 
+import { FORMATE_TABLE_HEADER } from "../../utils/helpers";
+import { ActionButtons } from "../../components/Button/ActionButtons";
 import useMutateData from "../../hooks/useMutateData";
 import useQueryData from "../../hooks/useQueryData";
-import CustomButton from "../../components/UI/CustomButton";
-import DeleteModal from "../../components/UI/DeleteModal";
+import DeleteModal from "../../components/Modal/DeleteModal";
 import TableBox from "../../components/table/TableBox";
 import { PATH } from "../../data/constants";
 import State from "./State";
@@ -26,33 +26,8 @@ const Restaurants = () => {
     mutate(config);
   };
 
-  const columnHelper = createColumnHelper();
-  const header = [
-    columnHelper.accessor("id", {
-      cell: (info) => info.getValue(),
-      header: "id",
-    }),
-    columnHelper.accessor("name", {
-      cell: (info) => info.getValue(),
-      header: "name",
-    }),
-    columnHelper.accessor("city", {
-      cell: (info) => info.getValue(),
-      header: "city",
-    }),
-    columnHelper.accessor("state", {
-      cell: (info) => info.getValue(),
-      header: "state",
-    }),
-    columnHelper.accessor("phone", {
-      cell: (info) => info.getValue(),
-      header: "phone",
-    }),
-    columnHelper.accessor("actions", {
-      cell: (info) => info.getValue(),
-      header: "actions",
-    }),
-  ];
+  const headerContent = ["id", "name", "city", "state", "phone", "actions"];
+  const header = FORMATE_TABLE_HEADER(headerContent);
 
   const data = restaurants?.map(({ state, nameEn, ...branch }) => {
     return {
@@ -60,27 +35,15 @@ const Restaurants = () => {
       name: nameEn,
       state: <State state={state} />,
       actions: (
-        <HStack>
-          <CustomButton
-            size="xs"
-            name="View"
-            variant="outline"
-            colorScheme="green"
-            onClick={() =>
-              navigate(`${branch.id}`, { state: { state, nameEn, ...branch } })
-            }
-          />
-          <CustomButton
-            size="xs"
-            name="Delete"
-            variant="outline"
-            colorScheme="red"
-            onClick={() => {
-              onOpen();
-              setRestaurantId(branch.id);
-            }}
-          />
-        </HStack>
+        <ActionButtons
+          onView={() =>
+            navigate(`${branch.id}`, { state: { state, nameEn, ...branch } })
+          }
+          onDelete={() => {
+            onOpen();
+            setRestaurantId(branch.id);
+          }}
+        />
       ),
     };
   });

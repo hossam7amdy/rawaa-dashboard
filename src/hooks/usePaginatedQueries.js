@@ -6,17 +6,18 @@ import { request } from "../utils/axios-utils";
 
 const queryFn = Object.freeze({
   orders: ({ queryKey }) => {
-    const [, page, { day, pageSize, state }] = queryKey;
+    const [, pageNumber, { day, pageSize, state }] = queryKey;
     return request({
-      url: `${PATH.ORDER}/allJoinUserData?state=${state}&pageNumber=${page}&pageSize=${pageSize}&day=${day}`,
+      url: `${PATH.ORDER}/allJoinUserData?state=${state}&pageNumber=${pageNumber}&pageSize=${pageSize}&day=${day}`,
     });
   },
 });
 
-export const usePaginatedQueries = ({ key, page, ...queryDetails }) => {
+export const usePaginatedQueries = ({ key, pageNumber, ...queryDetails }) => {
   const toast = useToast();
 
-  return useQuery([key, page, queryDetails], queryFn[key], {
+  return useQuery([key, pageNumber, queryDetails], queryFn[key], {
+    enabled: Boolean(pageNumber),
     onError: (error) => {
       const message = error?.response?.data?.message || error.message;
       toast({

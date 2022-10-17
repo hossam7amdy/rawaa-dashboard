@@ -11,7 +11,7 @@ import {
 import { VALIDATE_PASSWORD, VALIDATE_USERNAME } from "../utils/validations";
 import { Icon } from "../components/UI/Icons";
 import { AuthContext } from "../context/auth";
-import CustomButton from "../components/UI/CustomButton";
+import CustomButton from "../components/Button/CustomButton";
 import { request } from "../utils/axios-utils";
 import CustomInput from "../components/Input/CustomInput";
 import { PATH } from "../data/constants";

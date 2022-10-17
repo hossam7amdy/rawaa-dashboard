@@ -1,6 +1,6 @@
 import { List, Flex, Text, Button, ListItem } from "@chakra-ui/react";
 
-import { Modal } from "../../components/UI/Modal";
+import { Modal } from "../../components/Modal/Modal";
 
 export const DetailsModal = ({ isOpen, onClose, modalData }) => {
   const { header, data } = modalData;
