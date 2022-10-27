@@ -10,7 +10,7 @@ export const PATH = Object.freeze({
   RESTAURANT: "/en/api/cp/restaurant",
   STATS: "/ar/api/cp/Order/totalPrice",
   ADDRESS: "api/client/deliveryaddress",
-  FILE: "https://www.rawaa.some.com/api/file/",
+  FILE: "https://www.rawaa.somee.com/api/file/",
 });
 
 // sidebar link names
