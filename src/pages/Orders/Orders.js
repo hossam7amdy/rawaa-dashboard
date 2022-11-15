@@ -17,12 +17,6 @@ import TableBox from "../../components/table/TableBox";
 // defaults
 const day = 30;
 
-const calcTotalAmount = (order) => {
-  const total = order.total + order.deliveryFee;
-
-  return CURRENCY_FORMATER(total);
-};
-
 const Orders = () => {
   // handle modal data
   const [modalData, setModalData] = useState(null);
@@ -99,7 +93,7 @@ const Orders = () => {
       ),
       state: <State order={order} />,
       "date/time": DATE_FORMATER(order.orderDate),
-      "total-amount": calcTotalAmount(order),
+      "total-amount": CURRENCY_FORMATER(order.total),
     };
   });
 

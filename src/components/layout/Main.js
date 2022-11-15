@@ -1,5 +1,5 @@
 import React, { Suspense, useContext } from "react";
-import { Flex, Skeleton } from "@chakra-ui/react";
+import { Box, Skeleton } from "@chakra-ui/react";
 import { Routes, Route } from "react-router-dom";
 
 import { AuthContext } from "../../context/auth";
@@ -26,7 +26,7 @@ const Main = () => {
   const { isLoggedIn } = useContext(AuthContext);
 
   return (
-    <Flex as="main" p={2} flexGrow={1}>
+    <Box as="main" p={4} overflow="hidden">
       <Suspense fallback={<Skeleton />}>
         <Routes>
           {!isLoggedIn && <Route path="/" element={<Login />} />}
@@ -67,7 +67,7 @@ const Main = () => {
           <Route path="/*" element={<NotFound />} />
         </Routes>
       </Suspense>
-    </Flex>
+    </Box>
   );
 };
 

@@ -5,8 +5,7 @@ import {
   Flex,
   Link,
   List,
-  Spacer,
-  VStack,
+  Stack,
   Heading,
   Divider,
   ListItem,
@@ -16,17 +15,18 @@ import {
 import { GRAY_COLOR, SIDEBAR_LIST } from "../../data/constants";
 import { AuthContext } from "../../context/auth";
 import CustomButton from "../Button/CustomButton";
+import { Drawer } from "../Drawer/Drawer";
 import { Icon } from "../UI/Icons";
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }) => {
   const { logout, token } = useContext(AuthContext);
   const color = useColorModeValue(...GRAY_COLOR);
 
   const sidebarList =
-    token.userName === "admin" ? SIDEBAR_LIST : [SIDEBAR_LIST[0]];
+    token?.userName === "admin" ? SIDEBAR_LIST : [SIDEBAR_LIST[0]];
 
-  return (
-    <VStack as="nav" p={2} w="200px" align="start" borderRight="1px">
+  const bodyContent = (
+    <Stack as="nav">
       <Heading size="xs" textTransform="uppercase" color={color}>
         Main
       </Heading>
@@ -73,15 +73,29 @@ const Sidebar = () => {
         ))}
       </List>
       <Divider />
-      <Spacer />
-      <CustomButton
-        w="full"
-        name="Logout"
-        alignSelf="center"
-        onClick={logout}
-        leftIcon={<Icon name="exit" />}
-      />
-    </VStack>
+    </Stack>
+  );
+
+  const footerContent = (
+    <CustomButton
+      w="full"
+      name="Logout"
+      alignSelf="center"
+      onClick={() => {
+        logout();
+        onClose();
+      }}
+      leftIcon={<Icon name="exit" />}
+    />
+  );
+
+  return (
+    <Drawer
+      bodyContent={bodyContent}
+      footerContent={footerContent}
+      isOpen={isOpen}
+      onClose={onClose}
+    />
   );
 };
 

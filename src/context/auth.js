@@ -1,11 +1,9 @@
-import { useBoolean } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { createContext, useState } from "react";
 
 export const AuthContext = createContext({
   token: {},
   isLoggedIn: null,
-  isSidebarOpen: null,
   login: (user) => {},
   logout: () => {},
 });
@@ -15,7 +13,6 @@ const AuthProvider = (props) => {
   const localToken = localStorage.getItem("token");
   const initialToken = JSON.parse(localToken);
   const [userToken, setUserToken] = useState(initialToken);
-  const [isSidebarOpen, setIsSidebarOpen] = useBoolean(false);
 
   const userLoggedIn = !!userToken;
 
@@ -27,22 +24,15 @@ const AuthProvider = (props) => {
 
   const logoutHandler = () => {
     setUserToken(null);
-    setIsSidebarOpen.off();
     localStorage.removeItem("token");
     navigate("/", { replace: true });
   };
 
-  const toggleSidebarHandler = () => {
-    setIsSidebarOpen.toggle();
-  };
-
   const authContext = {
-    isSidebarOpen,
     token: userToken,
     login: loginHandler,
     logout: logoutHandler,
     isLoggedIn: userLoggedIn,
-    toggleSidebar: toggleSidebarHandler,
   };
 
   return (
